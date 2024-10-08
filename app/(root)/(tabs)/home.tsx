@@ -12,8 +12,8 @@ const HomeScreen = () => {
   });
 
   return (
-<SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
-        <ScrollView style={{ flex: 1 }}>
+    <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
+      <ScrollView style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
           <View>
             <Text style={{ color: '#4CAF50', fontSize: 14 }}>Welcome</Text>
@@ -42,12 +42,28 @@ const HomeScreen = () => {
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', padding: 16 }}>
           {[
-            { icon: 'truck', text: 'Book a Pickup' },
+            { icon: 'truck', text: 'Book a Pickup', navigateTo: 'Book_a_pickup' }, // Added navigateTo property
             { icon: 'refresh-cw', text: 'Recycle' },
             { icon: 'book-open', text: 'Learn' },
             { icon: 'file-text', text: 'News' },
           ].map((item, index) => (
-            <TouchableOpacity key={index} style={{ backgroundColor: 'white', borderRadius: 20, padding: 16, width: '48%', alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
+            <TouchableOpacity
+              key={index}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: 20,
+                padding: 16,
+                width: '48%',
+                alignItems: 'center',
+                marginBottom: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5
+              }}
+              onPress={() => item.navigateTo ? navigation.navigate(item.navigateTo) : null} // Navigate to the page if navigateTo exists
+            >
               <View style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 9999, marginBottom: 8 }}>
                 <Feather name={item.icon} size={24} color="#4CAF50" />
               </View>
@@ -58,11 +74,39 @@ const HomeScreen = () => {
 
         <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold', marginHorizontal: 16, marginBottom: 8 }}>Contact Us</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginBottom: 24 }}>
-          <TouchableOpacity style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', borderRadius: 9999, paddingVertical: 12, paddingHorizontal: 24, flex: 1, marginRight: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
+          <TouchableOpacity style={{
+            backgroundColor: 'white',
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: 9999,
+            paddingVertical: 12,
+            paddingHorizontal: 24,
+            flex: 1,
+            marginRight: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5
+          }}>
             <Feather name="mail" size={20} color="#4CAF50" />
             <Text style={{ color: '#4CAF50', fontWeight: 'semibold', marginLeft: 8 }}>Send Email</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ backgroundColor: '#E8F5E9', flexDirection: 'row', alignItems: 'center', borderRadius: 9999, paddingVertical: 12, paddingHorizontal: 24, flex: 1, marginLeft: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
+          <TouchableOpacity style={{
+            backgroundColor: '#E8F5E9',
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: 9999,
+            paddingVertical: 12,
+            paddingHorizontal: 24,
+            flex: 1,
+            marginLeft: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5
+          }}>
             <Feather name="phone" size={20} color="#4CAF50" />
             <Text style={{ color: '#4CAF50', fontWeight: 'semibold', marginLeft: 8 }}>Call Now</Text>
           </TouchableOpacity>
