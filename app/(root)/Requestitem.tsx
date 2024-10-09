@@ -4,7 +4,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { TailwindProvider } from "tailwindcss-react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -13,9 +14,16 @@ import { router } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
 
-const Requestitem = () => {
+const RequestItem = () => {
   const [quantity, setQuantity] = useState(5);
+  const [step, setStep] = useState(1);
+  const [factoryAddress, setFactoryAddress] = useState("");
+  const [beneficiaryName, setBeneficiaryName] = useState("");
+  const [bank, setBank] = useState("");
+  const [accountNo, setAccountNo] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
   const { category } = route.params;
@@ -54,6 +62,45 @@ const Requestitem = () => {
     }
   };
 
+const handleNext = async () => {
+  if (step === 1) {
+    if (!factoryAddress) {
+      Alert.alert("Error", "Please enter factory address");
+      return;
+    }
+    setStep(2);
+  } else if (step === 2) {
+    if (!beneficiaryName || !bank || !accountNo) {
+      Alert.alert("Error", "Please fill all payment details");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`http://192.168.43.196:5000/api/requestitem/request-item`, {
+        category,
+        quantity,
+        factoryAddress,
+        beneficiaryName,
+        bank,
+        accountNo,
+        totalSellPrice
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", response.data);
+
+      if (response.status === 201) {
+        setStep(3);
+      } else {
+        throw new Error(response.data.message || "Failed to submit request");
+      }
+    } catch (error) {
+      console.error("Error submitting request:", error);
+      Alert.alert("Error", `Failed to submit request. ${error.message}`);
+    }
+  }
+};
+
   return (
     <TailwindProvider>
       <View style={tw`flex-1 bg-gray-100`}>
@@ -81,10 +128,7 @@ const Requestitem = () => {
               {/* Right Section: Price and Quantity */}
               <View style={tw`flex-col items-end`}>
                 <View style={tw`mb-4`}>
-                  <Text style={tw`mb-2 text-sm text-gray-700`}>
-                    {" "}
-                    Sell Price{" "}
-                  </Text>
+                  <Text style={tw`mb-2 text-sm text-gray-700`}>Sell Price</Text>
                   <Text style={tw`text-sm text-gray-700`}>
                     1 kg - LKR 250.00
                   </Text>
@@ -121,65 +165,122 @@ const Requestitem = () => {
 
           {/* Stepper */}
           <View style={tw`flex-row items-center justify-between p-4 mt-4`}>
-            {[1, 2, 3].map((step) => (
-              <View key={step} style={tw`flex-row items-center`}>
+            {[1, 2, 3].map((s) => (
+              <View key={s} style={tw`flex-row items-center`}>
                 <View
                   style={tw`w-8 h-8 rounded-full border-2 ${
-                    step === 1
+                    s <= step
                       ? "bg-green-500 border-green-500"
                       : "border-green-300"
                   } flex items-center justify-center`}
                 >
                   <Text
                     style={tw`${
-                      step === 1 ? "text-white" : "text-black"
+                      s <= step ? "text-white" : "text-black"
                     } font-bold`}
                   >
-                    {String(step).padStart(2, "0")}
+                    {String(s).padStart(2, "0")}
                   </Text>
                 </View>
-                {step < 3 && <View style={tw`h-0.5 w-28 bg-green-300 ml-2`} />}
+                {s < 3 && <View style={tw`h-0.5 w-28 bg-green-300 ml-2`} />}
               </View>
             ))}
           </View>
 
-          {/* Request Details Form */}
-          <View style={tw`p-4 mb-5`}>
-            <Text style={tw`mb-2 text-lg font-semibold`}> Factory Name </Text>
-            <TextInput
-              value="Cleantech (Pvt) Ltd"
-              editable={false}
-              style={tw`p-3 mb-3 bg-gray-100 border border-gray-300 rounded-md`}
-            />
-            <Text style={tw`mb-2 text-lg font-semibold`}>
-              {" "}
-              Factory Address{" "}
-            </Text>
-            <TextInput
-              placeholder="Enter factory address"
-              style={tw`p-3 mb-3 border border-gray-300 rounded-md`}
-            />
-            <Text style={tw`mb-2 text-lg font-semibold`}>
-              Garbage Special type
-            </Text>
-            <TextInput
-              value={category}
-              editable={false}
-              style={tw`p-3 bg-gray-100 border border-gray-300 rounded-md`}
-            />
-          </View>
+          {step === 1 && (
+            /* Request Details Form */
+            <View style={tw`p-4 mb-5`}>
+              <Text style={tw`mb-2 text-lg font-semibold`}> Factory Name </Text>
+              <TextInput
+                value="Cleantech (Pvt) Ltd"
+                editable={false}
+                style={tw`p-3 mb-3 bg-gray-100 border border-gray-300 rounded-md`}
+              />
+              <Text style={tw`mb-2 text-lg font-semibold`}>
+                Factory Address
+              </Text>
+              <TextInput
+                placeholder="Enter factory address"
+                value={factoryAddress}
+                onChangeText={setFactoryAddress}
+                style={tw`p-3 mb-3 border border-gray-300 rounded-md`}
+              />
+              <Text style={tw`mb-2 text-lg font-semibold`}>
+                Garbage Special type
+              </Text>
+              <TextInput
+                value={category}
+                editable={false}
+                style={tw`p-3 bg-gray-100 border border-gray-300 rounded-md`}
+              />
+            </View>
+          )}
 
-          {/* Next Button */}
-          <TouchableOpacity
-            style={tw`p-4 mx-4 mb-4 bg-black rounded-lg`}
-            onPress={() => navigation.navigate("RequestedItemPayment")}
-          >
-            <Text style={tw`text-lg text-center text-white`}> NEXT </Text>
-          </TouchableOpacity>
+          {step === 2 && (
+            /* Payment Details Form */
+            <View style={tw`p-4 mb-5`}>
+              <Text style={tw`mb-2 text-lg text-gray-700`}>
+                {" "}
+                Beneficiary Name{" "}
+              </Text>
+              <TextInput
+                value={beneficiaryName}
+                onChangeText={setBeneficiaryName}
+                placeholder="Enter name"
+                style={tw`p-3 mb-3 border border-gray-300 rounded-md`}
+              />
+
+              <Text style={tw`mb-2 text-lg text-gray-700`}> Bank </Text>
+              <View style={tw`p-2 mb-4 border border-gray-300 rounded-lg`}>
+                <Picker
+                  selectedValue={bank}
+                  onValueChange={(itemValue) => setBank(itemValue)}
+                >
+                  <Picker.Item label="Select Bank" value="" />
+                  <Picker.Item label="Bank A" value="BankA" />
+                  <Picker.Item label="Bank B" value="BankB" />
+                </Picker>
+              </View>
+
+              <Text style={tw`mb-2 text-lg text-gray-700`}> Account No.</Text>
+              <TextInput
+                value={accountNo}
+                onChangeText={setAccountNo}
+                placeholder="Enter account number"
+                style={tw`p-3 border border-gray-300 rounded-md`}
+              />
+            </View>
+          )}
+
+          {step === 3 && (
+            <View style={tw`p-4 mb-5`}>
+              <Text style={tw`text-lg text-center text-green-500`}>
+                Your request is successful!
+              </Text>
+            </View>
+          )}
+
+          {step < 3 && (
+            <TouchableOpacity
+              style={tw`p-4 mx-4 mb-4 bg-black rounded-lg`}
+              onPress={handleNext}
+            >
+              <Text style={tw`text-lg text-center text-white`}> NEXT </Text>
+            </TouchableOpacity>
+          )}
+
+          {step === 3 && (
+            <TouchableOpacity
+              style={tw`p-4 mx-4 mb-4 bg-black rounded-lg`}
+              onPress={() => navigation.navigate("Home")}
+            >
+              <Text style={tw`text-lg text-center text-white`}> OK </Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       </View>
     </TailwindProvider>
   );
 };
 
-export default Requestitem;
+export default RequestItem;
