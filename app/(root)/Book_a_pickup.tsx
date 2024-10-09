@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView ,Platform} from 'react-native';
 import tw from 'twrnc'; // Import Tailwind CSS for React Native
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import { router } from 'expo-router';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Book_a_pickup = () => {
   const navigation = useNavigation(); // Hook for navigation inside the component
@@ -22,8 +23,14 @@ const Book_a_pickup = () => {
     }
   };
 
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-1",
+    android: "mt-2 mb-2"
+  });
+
   return (
-    
+    <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
+
     <ScrollView style={tw`flex-1 bg-white mt-5`}>
       <View style={{ backgroundColor: '#0C6C41', padding: 16 ,marginTop:4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -100,6 +107,7 @@ const Book_a_pickup = () => {
         <Text style={tw`text-white text-center font-semiboldml-`}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
