@@ -36,6 +36,8 @@ app.listen(port, () => {
 
 // Import routes
 const PassengerRoute = require('./routes/PassengerRoute');
+const pickUpGarbage = require("./routes/pickupGarbageRoute")
 
 // Use routes
 app.use('/api/passenger', PassengerRoute);
+app.use('/api/pickupgarbage', pickUpGarbage);

@@ -43,7 +43,7 @@ const HomeScreen = () => {
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', padding: 16 }}>
           {[
             { icon: 'truck', text: 'Book a Pickup', navigateTo: 'Book_a_pickup' }, // Added navigateTo property
-            { icon: 'refresh-cw', text: 'Recycle' },
+            { icon: 'refresh-cw', text: 'Recycle', navigateTo :'Resycle' },
             { icon: 'book-open', text: 'Learn' },
             { icon: 'file-text', text: 'News' },
           ].map((item, index) => (
@@ -111,6 +111,13 @@ const HomeScreen = () => {
             <Text style={{ color: '#4CAF50', fontWeight: 'semibold', marginLeft: 8 }}>Call Now</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate('GarbageMap')}>
+  <View className='ml-10'>
+    <Text>Driver</Text> 
+  </View>
+</TouchableOpacity>
+
+       
       </ScrollView>
     </SafeAreaView>
   );

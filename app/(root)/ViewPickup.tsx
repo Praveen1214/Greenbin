@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import tw from 'twrnc'; // Tailwind CSS for React Native
 import Garbagebag from "../../assets/images/garbageba.png"
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
-
+import { router } from 'expo-router';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const ViewPickup = () => {
 
@@ -11,27 +12,38 @@ const ViewPickup = () => {
 
     
   return (
-    <View style={tw`flex-1 bg-white p-4`}>
-      {/* Step Indicator */}
-      <View style={tw`flex-row justify-between items-center mb-8`}>
-        {[1, 2, 3].map((step) => (
-          <View key={step} style={tw`items-center`}>
-            <View
-              style={tw`w-8 h-8 rounded-full ${
-                step === 2 ? 'bg-green-500' : 'bg-gray-200'
-              } flex items-center justify-center`}
-            >
-              <Text style={tw`${step === 2 ? 'text-white' : 'text-black'} font-bold`}>
-                {String(step).padStart(2, '0')}
-              </Text>
-            </View>
-            {step < 3 && <View style={tw`h-0.5 w-16 bg-gray-200 mt-4`} />}
-          </View>
-        ))}
+    <View style={tw`flex-1 bg-white `}>
+      <View style={{ backgroundColor: '#0C6C41', padding: 16 ,marginTop:24, }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <AntDesign name="arrowleft" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>View pickoup</Text>
+        </View>
       </View>
+      {/* Step Indicator */}
+      <View style={tw`flex-row justify-between items-center mt-4 p-4`}>
+  {[1, 2, 3].map((step) => (
+    <View key={step} style={tw`flex-row items-center`}>
+      <View
+        style={tw`w-8 h-8 rounded-full border-2 ${
+          step === 2 ? 'bg-green-500 border-green-500' : ' border-green-300'
+        } flex items-center justify-center`}
+      >
+        <Text style={tw`${step === 2 ? 'text-white' : 'text-black'} font-bold`}>
+          {String(step).padStart(2, '0')}
+        </Text>
+      </View>
+      {step < 3 && <View style={tw`h-0.5 w-28 bg-green-300 ml-2`} />}
+    </View>
+  ))}
+</View>
+
+
 
       {/* Garbage Card */}
-      <View style={tw`bg-green-100 rounded-lg p-4 mt-20`}>
+      <View style={tw`bg-green-100 rounded-lg p-4 mt-10 p-4 ml-4 mr-4`}>
+      
         <View style={tw`flex-row items-center`}>
           {/* Icon */}
           <View style={tw`mr-4`}>
@@ -60,7 +72,7 @@ const ViewPickup = () => {
       </View>
 
       {/* Next Button */}
-      <TouchableOpacity style={tw`bg-black rounded-md py-3 mt-16`} onPress={() => navigation.navigate('Pay')}>
+      <TouchableOpacity style={tw`bg-black rounded-md py-3 mt-16 ml-4 mr-4`} onPress={() => navigation.navigate('Pay')}>
         <Text style={tw`text-white text-center font-semibold`}>Next</Text>
       </TouchableOpacity>
     </View>
