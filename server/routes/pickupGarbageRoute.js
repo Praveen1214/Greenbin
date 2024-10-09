@@ -32,5 +32,16 @@ router.route('/addpickupgarbage').post(async (req, res) => {
     }
 });
 
+//get all pickupgarbage
+router.get("/getallpickupgarbage",async(req,res)=>{
+
+    try {
+        const allpickups = await pickUpGarbage.find()
+        return res.json(allpickups);
+    } catch (error) {
+        return res.status(400).json({massage : error})
+    }
+});
+
 
 module.exports = router;
