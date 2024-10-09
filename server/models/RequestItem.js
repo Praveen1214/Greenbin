@@ -1,0 +1,42 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+
+const requestItemSchema = new mongoose.Schema({
+    category: {
+        type: String,
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+    factoryAddress: {
+        type: String,
+        required: true,
+    },
+    beneficiaryName: {
+        type: String,
+        required: true,
+    },
+    bank: {
+        type: String,
+        required: true,
+    },
+    accountNo: {
+        type: String,
+        required: true,
+    },
+    totalSellPrice: {
+        type: Number,
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
+const RequestItem = mongoose.model('requestitems', requestItemSchema);
+
+module.exports = RequestItem;
