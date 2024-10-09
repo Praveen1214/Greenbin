@@ -36,9 +36,12 @@ const Resycle = () => {
     }
   ];
 
-  const handleNavigate = (category) => {
-    router.push("Requestitem");
-  };
+const handleNavigate = (category) => {
+  router.push({
+    pathname: "/Requestitem",
+    params: { category: category.name }
+  });
+};
 
   return (
     <TailwindProvider>
