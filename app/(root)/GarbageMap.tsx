@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, Platform } from 'react-native';
+import { View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import tw from 'twrnc';
 import { AntDesign, Feather } from '@expo/vector-icons';
 import axios from 'axios';
 import Garbagebag from "../../assets/images/garbageba.png";
+import garbagetruck from "../../assets/images/garbagetruck.png";
 import * as Location from 'expo-location';
+import Track from './Track';
 
 const GarbageMap = () => {
   const navigation = useNavigation();
   const [pickupgarbage, setPickupGarbage] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [mapRegion, setMapRegion] = useState(null);
+  const [selectedPickup, setSelectedPickup] = useState(null); // Track selected pickup
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.9.96:5000/api/pickupgarbage/getallpickupgarbage"
+        "http://192.168.8.154:5000/api/pickupgarbage/getallpickupgarbage"
       );
       setPickupGarbage(response.data);
     } catch (error) {
@@ -77,8 +80,12 @@ const GarbageMap = () => {
                   longitude: currentLocation.longitude,
                 }}
                 title="Your Location"
-                pinColor="blue"
-              />
+              >
+                <Image
+                  source={garbagetruck}  // Use the truck icon here
+                  style={{ width: 40, height: 40 }}  // Adjust size as needed
+                />
+              </Marker>
             )}
             {pickupgarbage.map((pickup, index) => (
               <Marker
@@ -89,11 +96,12 @@ const GarbageMap = () => {
                 }}
                 title={pickup.location.address}
                 description={`Garbage types: ${pickup.garbagetypes}`}
+                onPress={() => setSelectedPickup(pickup)} // Set selected pickup
               >
                 <View style={{ padding: 5, borderRadius: 5 }}>
                   <Image
                     source={Garbagebag}
-                    style={tw`w-12 h-12`}
+                    style={tw`w-10 h-10`}
                   />
                 </View>
               </Marker>
@@ -103,11 +111,17 @@ const GarbageMap = () => {
       </View>
      
       {/* Location List */}
-      <View style={{ alignItems: 'center', padding: 10 }}>
+      <View style={{ alignItems: 'center', padding: 10 }} className='flex-row justify-between px-4 '>
         <Text style={{ color: '#0C6C41', fontWeight: 'bold', fontSize: 18 }}>
           Pickup Addresses
         </Text>
+        
+          <TouchableOpacity >
+            <Text className='bg-green-600 p-2 rounded-lg text-sm text-white'>Pickup</Text>
+          </TouchableOpacity>
+     
       </View>
+      
       <View style={{ padding: 16, maxHeight: 200 }}>
         <FlatList
           data={pickupgarbage}
@@ -116,13 +130,16 @@ const GarbageMap = () => {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
               <Feather name="map-pin" size={20} color="black" />
               <Text style={{ marginLeft: 8, fontSize: 16, color: 'black' }}>{item.location.address}</Text>
-              <TouchableOpacity style={{ marginLeft: 'auto', padding: 8 }}>
+              <TouchableOpacity style={{ marginLeft: 'auto', padding: 8 }} onPress={() => setSelectedPickup(item)}>
                 <Feather name="square" size={20} color="gray" />
               </TouchableOpacity>
             </View>
           )}
         />
       </View>
+
+      {/* Track Component */}
+      <Track currentLocation={currentLocation} selectedPickup={selectedPickup} />
     </View>
   );
 };
