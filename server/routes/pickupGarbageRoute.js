@@ -9,7 +9,9 @@ router.route('/addpickupgarbage').post(async (req, res) => {
         location,
         garbagetypes,
         message,
+        status,
         date,
+       
        
     } = req.body;
 
@@ -18,7 +20,9 @@ router.route('/addpickupgarbage').post(async (req, res) => {
         location,
         garbagetypes,
         message,
+        status,
         date,
+       
     });
 
     try {
@@ -29,6 +33,17 @@ router.route('/addpickupgarbage').post(async (req, res) => {
     } catch (error) {
 
         return res.status(500).json({ status: "Error with offering pickup garbage", messsage: error });
+    }
+});
+
+//get all pickupgarbage
+router.get("/getallpickupgarbage",async(req,res)=>{
+
+    try {
+        const allpickups = await pickUpGarbage.find()
+        return res.json(allpickups);
+    } catch (error) {
+        return res.status(400).json({massage : error})
     }
 });
 

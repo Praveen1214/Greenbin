@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView ,Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView ,Platform,Image} from 'react-native';
 import tw from 'twrnc'; // Import Tailwind CSS for React Native
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import { router } from 'expo-router';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Garbagebag from "../../assets/images/garbageba.png";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import {GoogleTextInput} from "@/components/GoogleTextInput"
+import { useRoute } from "@react-navigation/native";
+
+
 
 const Book_a_pickup = () => {
+
+
   const navigation = useNavigation(); // Hook for navigation inside the component
-  const [address, setAddress] = useState('');
+  const [Location, setLocation] = useState('');
   const [message, setMessage] = useState('');
   const [selectedTypes, setSelectedTypes] = useState([]); // Changed to multiple selections
 
@@ -40,6 +48,36 @@ const Book_a_pickup = () => {
           <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>Book a pickup</Text>
         </View>
       </View>
+
+      <View style={tw`p-5 mx-4 mt-5 mb-5 bg-green-100 rounded-lg`}>
+            <View style={tw`flex-row justify-between `}>
+              {/* Left Section: Product Info */}
+              <View style={tw`items-start mt-4 `}>
+              <Image
+                    source={Garbagebag}
+                    style={{ width: 140, height: 140 }}
+                  />
+               
+              </View>
+
+              {/* Right Section: Price and Quantity */}
+              <View style={tw`flex-col items-end mt-12`}>
+                
+                <Text style={tw`text-xl font-bold text-gray-900`}>
+                Purche price Price
+              </Text>
+              <Text style={tw`text-xl font-bold text-red-500`}>
+                LKR 
+              </Text>
+               
+
+              </View>
+            </View>
+
+            {/* Total Price Section */}
+            
+          </View>
+
       {/* Stepper */}
       <View style={tw`flex-row justify-between items-center mt-4 p-4`}>
   {[1, 2, 3].map((step) => (
@@ -65,8 +103,7 @@ const Book_a_pickup = () => {
         <TextInput
           style={tw`border border-gray-300 rounded-md p-2`}
           placeholder="Enter address"
-          value={address}
-          onChangeText={setAddress}
+          onChangeText={setLocation}
         />
       </View>
 
@@ -103,9 +140,10 @@ const Book_a_pickup = () => {
       />
 
       {/* Next Button */}
-      <TouchableOpacity style={tw`bg-black rounded-md py-3 mt-16 p-4 px-5 ml-4 mr-4`} onPress={() => navigation.navigate('ViewPickup')}>
-        <Text style={tw`text-white text-center font-semiboldml-`}>Next</Text>
+      <TouchableOpacity style={tw`bg-black rounded-md py-3 mt-10 p-4 px-5 ml-4 mr-4 `}>
+        <Text style={tw`text-white text-center font-semiboldml-`}>Submit</Text>
       </TouchableOpacity>
+      <View style={tw`mb-10`} />
     </ScrollView>
     </SafeAreaView>
   );

@@ -26,6 +26,7 @@
     "expo-font": "~12.0.9",
     "expo-linear-gradient": "^13.0.2",
     "expo-linking": "~6.3.1",
+    "expo-location": "^17.0.1",
     "expo-router": "~3.5.23",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
@@ -37,6 +38,8 @@
     "react-native": "0.74.5",
     "react-native-chart-kit": "^6.12.0",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-google-places-autocomplete": "^2.5.7",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-maps": "^1.18.0",
     "react-native-reanimated": "~3.10.1",
@@ -47,7 +50,8 @@
     "react-native-web": "~0.19.10",
     "tailwind-rn": "^4.2.0",
     "tailwindcss-react-native": "^1.7.10",
-    "twrnc": "^4.5.1"
+    "twrnc": "^4.5.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
