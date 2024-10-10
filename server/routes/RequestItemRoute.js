@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const RequestItem = require('../models/RequestItem');
 
+router.get('/request-items', async (req, res) => {
+    try {
+      const requestItems = await RequestItem.find().sort({ createdAt: -1 });
+      res.json(requestItems);
+    } catch (error) {
+      console.error('Error fetching request items:', error);
+      res.status(500).json({ message: 'Failed to fetch request items', error: error.message });
+    }
+  });
+
 
 router.post('/request-item', async (req, res) => {
     try {
