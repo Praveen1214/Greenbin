@@ -34,27 +34,14 @@ const pickUpGarbageSchema = new Schema({
         type: String,
         required: false,
     },
+    status: {
+        type: String,
+        default: "Pending",
+    },
     date: {
         type: String,
         required: false,
     },
-    quentity: {
-        type: String,
-       
-    },
-    bank: {
-        type: String,
-       
-    },
-    accountNo: {
-        type: String,
-       
-    },
-    totalPrice: {
-        type: String,
-       
-    },
-    
 });
 
 const Passengers = mongoose.model('pickupgarbage', pickUpGarbageSchema);
