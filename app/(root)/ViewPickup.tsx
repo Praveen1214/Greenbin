@@ -18,7 +18,7 @@ const ViewPickup = () => {
           <TouchableOpacity onPress={() => router.back()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableOpacity>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>View pickoup</Text>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>View pickup</Text>
         </View>
       </View>
       {/* Step Indicator */}
