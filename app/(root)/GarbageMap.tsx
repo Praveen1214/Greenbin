@@ -81,6 +81,16 @@ const GarbageMap = () => {
     setShowDirections(false);
   };
 
+  // Function to remove the completed pickup
+  const handleCompletePickup = () => {
+    if (selectedPickup) {
+      const updatedPickups = pickupgarbage.filter(pickup => pickup !== selectedPickup);
+      setPickupGarbage(updatedPickups); // Update the state to remove the completed pickup
+      setSelectedPickup(null); // Clear the selected pickup after completion
+      setShowDirections(false); // Hide the Track component
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       {/* Header */}
@@ -183,7 +193,12 @@ const GarbageMap = () => {
 
       {/* Track Component */}
       {showDirections && selectedPickup && (
-        <Track currentLocation={currentLocation} selectedPickup={selectedPickup} onCloseTracking={handleCloseTracking} />
+        <Track
+          currentLocation={currentLocation}
+          selectedPickup={selectedPickup}
+          onCloseTracking={handleCloseTracking}
+          onComplete={handleCompletePickup} // Pass the completion function
+        />
       )}
     </View>
   );

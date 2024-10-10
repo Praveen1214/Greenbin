@@ -35,6 +35,10 @@ const requestItemSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    status: {
+        type: String,
+        default:"Pending",
+    },
 });
 
 const RequestItem = mongoose.model('requestitems', requestItemSchema);

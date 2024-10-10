@@ -44,7 +44,7 @@ const HomeScreen = () => {
           {[
             { icon: 'truck', text: 'Book a Pickup', navigateTo: 'Book_a_pickup' }, // Added navigateTo property
             { icon: 'refresh-cw', text: 'Recycle', navigateTo :'Resycle' },
-            { icon: 'book-open', text: 'Learn' },
+            { icon: 'book-open', text: 'Learn', navigateTo :'AllrequestItems' },
             { icon: 'file-text', text: 'News' },
           ].map((item, index) => (
             <TouchableOpacity
