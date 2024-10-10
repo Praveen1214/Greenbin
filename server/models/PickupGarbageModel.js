@@ -19,16 +19,15 @@ const locationSchema = new Schema({
 const pickUpGarbageSchema = new Schema({
     userid: {
         type: String,
-       
     },
     location: {
         type: locationSchema,
-        required: true,
+        
     },
     garbagetypes: {
-        type: String,
-        required: true,
-        enum:['Papers', 'Plastic', 'Mentol', 'Cloths', 'E waste', 'Glass']
+        type: [String],  // Accept array of strings
+        
+        enum: ['Papers', 'Plastic', 'Mentol', 'Cloths', 'E waste', 'Glass']
     },
     message: {
         type: String,
@@ -44,6 +43,6 @@ const pickUpGarbageSchema = new Schema({
     },
 });
 
-const Passengers = mongoose.model('pickupgarbage', pickUpGarbageSchema);
+const PickupGarbage = mongoose.model('pickupgarbage', pickUpGarbageSchema);
 
-module.exports = Passengers;
+module.exports = PickupGarbage;
