@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import axios from 'axios';
 import Garbagetruck from "../../assets/images/garbagetruck.png";
 import Garbagebag from "../../assets/images/garbageba.png";
 
-const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
-  const navigation = useNavigation();
-
+const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete }) => {
   const [route, setRoute] = useState(null);
   const [estimatedTime, setEstimatedTime] = useState('');
   const [distance, setDistance] = useState('');
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     if (currentLocation && selectedPickup) {
@@ -28,10 +26,8 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
       if (response.data.routes.length > 0) {
         const points = decodePolyline(response.data.routes[0].overview_polyline.points);
         setRoute(points);
-        
         const duration = response.data.routes[0].legs[0].duration.text;
         const dist = response.data.routes[0].legs[0].distance.text;
-
         setEstimatedTime(duration);
         setDistance(dist);
       } else {
@@ -54,7 +50,7 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      let dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      let dlat = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
       lat += dlat;
       shift = 0;
       result = 0;
@@ -63,11 +59,17 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      let dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      let dlng = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
       lng += dlng;
       poly.push({ latitude: lat / 1E5, longitude: lng / 1E5 });
     }
     return poly;
+  };
+
+  const handleComplete = () => {
+    setCompleted(true);
+    Alert.alert("Success", "Garbage collection completed successfully!");
+    onComplete(); // Call the onComplete function passed from GarbageMap
   };
 
   if (!currentLocation || !selectedPickup || !route) {
@@ -87,7 +89,7 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
           </Text>
         </View>
       </View>
-      
+
       {/* Map */}
       <MapView
         style={{ flex: 1 }}
@@ -110,18 +112,22 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
             style={{ width: 40, height: 40 }}
           />
         </Marker>
-        <Marker
-          coordinate={{
-            latitude: selectedPickup.location.latitude,
-            longitude: selectedPickup.location.longitude,
-          }}
-          title={selectedPickup.location.address}
-        >
-          <Image
-            source={Garbagebag}
-            style={{ width: 40, height: 40 }}
-          />
-        </Marker>
+
+        {!completed && (
+          <Marker
+            coordinate={{
+              latitude: selectedPickup.location.latitude,
+              longitude: selectedPickup.location.longitude,
+            }}
+            title={selectedPickup.location.address}
+          >
+            <Image
+              source={Garbagebag}
+              style={{ width: 40, height: 40 }}
+            />
+          </Marker>
+        )}
+
         <Polyline
           coordinates={route}
           strokeColor="#0C6C41"
@@ -131,36 +137,36 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking }) => {
 
       {/* Estimated Time, Distance and Garbage Category */}
       <View className="absolute bottom-8 left-5 right-5 p-4 bg-white rounded-lg shadow-lg">
-      <View className="flex-row mt-2 items-center">
-    <Text className="text-base font-semibold text-green-600">Arival time :</Text>
-    <Text className="text-base text-gray-700"> {estimatedTime}</Text>
-  </View>
+        <View className="flex-row mt-2 items-center">
+          <Text className="text-base font-semibold text-green-600">Arrival time :</Text>
+          <Text className="text-base text-gray-700"> {estimatedTime}</Text>
+        </View>
 
-  <View className="flex-row mt-2 items-center">
-    <Text className="text-base font-semibold text-green-600">Distance: </Text>
-    <Text className="text-base text-gray-700"> {distance}</Text>
-  </View>
-  <View className="flex-row mt-2 items-center">
-    <Text className="text-base font-semibold text-green-600">Garbage Category: </Text>
-    <Text className="text-base text-gray-700"> {selectedPickup.garbagetypes}</Text>
-  </View>
-  
-  <View className="flex-row mt-2 items-center">
-    <Text className="text-base font-semibold text-green-600">Address: </Text>
-    <Text className="text-base text-gray-700"> {selectedPickup.location.address}</Text>
-  </View>
+        <View className="flex-row mt-2 items-center">
+          <Text className="text-base font-semibold text-green-600">Distance: </Text>
+          <Text className="text-base text-gray-700"> {distance}</Text>
+        </View>
 
-  {/* Optional additional content */}
-  <View className="flex-row justify-between mt-4">
-    <TouchableOpacity className="bg-green-600 py-2 px-4 rounded-lg">
-      <Text className="text-white font-medium">Start Navigation</Text>
-    </TouchableOpacity>
-    <TouchableOpacity className="bg-gray-300 py-2 px-4 rounded-lg">
-      <Text className="text-black font-medium">Cancel</Text>
-    </TouchableOpacity>
-  </View>
-</View>
+        <View className="flex-row mt-2 items-center">
+          <Text className="text-base font-semibold text-green-600">Garbage Category: </Text>
+          <Text className="text-base text-gray-700"> {selectedPickup.garbagetypes}</Text>
+        </View>
 
+        <View className="flex-row mt-2 items-center">
+          <Text className="text-base font-semibold text-green-600">Address: </Text>
+          <Text className="text-base text-gray-700"> {selectedPickup.location.address}</Text>
+        </View>
+
+        {/* Complete Button */}
+        <View className="flex-row justify-center mt-4">
+          <TouchableOpacity
+            className="bg-green-600 py-2 px-4 rounded-lg"
+            onPress={handleComplete}
+          >
+            <Text className="text-white font-medium">Complete</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };

@@ -37,5 +37,17 @@ router.post('/request-item', async (req, res) => {
 });
 
 
+//get all requestitems
+router.get("/getallrequestitems",async(req,res)=>{
+
+    try {
+        const allrequest = await RequestItem.find()
+        return res.json(allrequest);
+    } catch (error) {
+        return res.status(400).json({massage : error})
+    }
+});
+
+
 
 module.exports = router;
