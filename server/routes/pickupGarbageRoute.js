@@ -10,6 +10,10 @@ router.route('/addpickupgarbage').post(async (req, res) => {
         garbagetypes,
         message,
         date,
+        quentity,
+        bank,
+        accountNo,
+        totalPrice
        
     } = req.body;
 
@@ -19,6 +23,10 @@ router.route('/addpickupgarbage').post(async (req, res) => {
         garbagetypes,
         message,
         date,
+        quentity,
+        bank,
+        accountNo,
+        totalPrice
     });
 
     try {

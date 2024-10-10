@@ -38,6 +38,22 @@ const pickUpGarbageSchema = new Schema({
         type: String,
         required: false,
     },
+    quentity: {
+        type: String,
+       
+    },
+    bank: {
+        type: String,
+       
+    },
+    accountNo: {
+        type: String,
+       
+    },
+    totalPrice: {
+        type: String,
+       
+    },
     
 });
 
