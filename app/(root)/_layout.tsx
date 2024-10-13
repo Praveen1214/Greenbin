@@ -28,7 +28,7 @@ const Layout = () => {
       <Stack.Screen name="ViewPickup" options={{ headerShown: false }} />
       <Stack.Screen name="Pay" options={{ headerShown: false }} />
       <Stack.Screen name="Resycle" options={{ headerShown: false }} />
-      <Stack.Screen name="Requestitem" options={{ headerShown: false }} />
+  < Stack.Screen name = "Requestitem" options = {{ headerShown: false }} />
       <Stack.Screen name="RequestedItemPayment" options={{ headerShown: false }} />
       <Stack.Screen name="GarbageMap" options={{ headerShown: false }} />
       <Stack.Screen name="AllrequestItems" options={{ headerShown: false }} />

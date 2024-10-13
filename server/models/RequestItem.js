@@ -11,6 +11,10 @@ const requestItemSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    factoryName: {
+        type: String,
+        required: true,
+    },
     factoryAddress: {
         type: String,
         required: true,

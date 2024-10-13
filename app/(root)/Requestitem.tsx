@@ -20,6 +20,7 @@ import axios from "axios";
 const RequestItem = () => {
   const [quantity, setQuantity] = useState(5);
   const [step, setStep] = useState(1);
+  const [factoryName, setFactoryName] = useState("");
   const [factoryAddress, setFactoryAddress] = useState("");
   const [beneficiaryName, setBeneficiaryName] = useState("");
   const [bank, setBank] = useState("");
@@ -62,44 +63,48 @@ const RequestItem = () => {
     }
   };
 
-const handleNext = async () => {
-  if (step === 1) {
-    if (!factoryAddress) {
-      Alert.alert("Error", "Please enter factory address");
-      return;
-    }
-    setStep(2);
-  } else if (step === 2) {
-    if (!beneficiaryName || !bank || !accountNo) {
-      Alert.alert("Error", "Please fill all payment details");
-      return;
-    }
-
-    try {
-      const response = await axios.post(`http://192.168.8.154:5000/api/requestitem/request-item`, {
-        category,
-        quantity,
-        factoryAddress,
-        beneficiaryName,
-        bank,
-        accountNo,
-        totalSellPrice
-      });
-
-      console.log("Response status:", response.status);
-      console.log("Response data:", response.data);
-
-      if (response.status === 201) {
-        setStep(3);
-      } else {
-        throw new Error(response.data.message || "Failed to submit request");
+  const handleNext = async () => {
+    if (step === 1) {
+      if (!factoryAddress) {
+        Alert.alert("Error", "Please enter factory address");
+        return;
       }
-    } catch (error) {
-      console.error("Error submitting request:", error);
-      Alert.alert("Error", `Failed to submit request. ${error.message}`);
+      setStep(2);
+    } else if (step === 2) {
+      if (!beneficiaryName || !bank || !accountNo) {
+        Alert.alert("Error", "Please fill all payment details");
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          `http://192.168.43.196:5000/api/requestitem/request-item`,
+          {
+            category,
+            quantity,
+            factoryName,
+            factoryAddress,
+            beneficiaryName,
+            bank,
+            accountNo,
+            totalSellPrice
+          }
+        );
+
+        console.log("Response status:", response.status);
+        console.log("Response data:", response.data);
+
+        if (response.status === 201) {
+          setStep(3);
+        } else {
+          throw new Error(response.data.message || "Failed to submit request");
+        }
+      } catch (error) {
+        console.error("Error submitting request:", error);
+        Alert.alert("Error", `Failed to submit request. ${error.message}`);
+      }
     }
-  }
-};
+  };
 
   return (
     <TailwindProvider>
@@ -128,7 +133,10 @@ const handleNext = async () => {
               {/* Right Section: Price and Quantity */}
               <View style={tw`flex-col items-end`}>
                 <View style={tw`mb-4`}>
-                  <Text style={tw`mb-2 text-sm text-gray-700`}>Sell Price</Text>
+                  <Text style={tw`mb-2 text-sm text-gray-700`}>
+                    {" "}
+                    Sell Price{" "}
+                  </Text>
                   <Text style={tw`text-sm text-gray-700`}>
                     1 kg - LKR 250.00
                   </Text>
@@ -192,8 +200,9 @@ const handleNext = async () => {
             <View style={tw`p-4 mb-5`}>
               <Text style={tw`mb-2 text-lg font-semibold`}> Factory Name </Text>
               <TextInput
-                value="Cleantech (Pvt) Ltd"
-                editable={false}
+                placeholder="Enter factory name"
+                value={factoryName}
+                onChangeText={setFactoryName}
                 style={tw`p-3 mb-3 bg-gray-100 border border-gray-300 rounded-md`}
               />
               <Text style={tw`mb-2 text-lg font-semibold`}>
@@ -237,8 +246,20 @@ const handleNext = async () => {
                   onValueChange={(itemValue) => setBank(itemValue)}
                 >
                   <Picker.Item label="Select Bank" value="" />
-                  <Picker.Item label="Bank A" value="BankA" />
-                  <Picker.Item label="Bank B" value="BankB" />
+                  <Picker.Item label="BOC" value="BOC" />
+                  <Picker.Item
+                    label="Commercial Bank"
+                    value="Commercial Bank"
+                  />
+                  <Picker.Item label="DFCC Bank" value="DFCC Bank" />
+                  <Picker.Item label="HNB" value="HNB" />
+                  <Picker.Item label="NSB" value="NSB" />
+                  <Picker.Item label="Peoples Bank" value="Peoples Bank" />
+                  <Picker.Item label="RDB" value="RDB" />
+                  <Picker.Item label="SDB" value="SDB" />
+                  <Picker.Item label="Sampath Bank" value="Sampath Bank" />
+                  <Picker.Item label="Seylan Bank" value="Seylan Bank" />
+                  <Picker.Item label="Union Bank" value="Union Bank" />
                 </Picker>
               </View>
 
@@ -265,16 +286,23 @@ const handleNext = async () => {
               style={tw`p-4 mx-4 mb-4 bg-black rounded-lg`}
               onPress={handleNext}
             >
-              <Text style={tw`text-lg text-center text-white`}> NEXT </Text>
+              <Text style={tw`text-lg text-center text-white`}> SUBMIT </Text>
             </TouchableOpacity>
           )}
 
           {step === 3 && (
             <TouchableOpacity
               style={tw`p-4 mx-4 mb-4 bg-black rounded-lg`}
-              onPress={() => navigation.navigate("Home")}
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/activity"
+                })
+              }
             >
-              <Text style={tw`text-lg text-center text-white`}> OK </Text>
+              <Text style={tw`text-lg text-center text-white`}>
+                {" "}
+                View All Requests{" "}
+              </Text>
             </TouchableOpacity>
           )}
         </ScrollView>

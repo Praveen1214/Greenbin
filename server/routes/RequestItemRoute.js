@@ -9,6 +9,7 @@ router.post('/request-item', async (req, res) => {
         const {
             category,
             quantity,
+            factoryName,
             factoryAddress,
             beneficiaryName,
             bank,
@@ -19,6 +20,7 @@ router.post('/request-item', async (req, res) => {
         const newRequestItem = new RequestItem({
             category,
             quantity,
+            factoryName,
             factoryAddress,
             beneficiaryName,
             bank,

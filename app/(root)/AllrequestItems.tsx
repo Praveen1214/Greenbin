@@ -28,17 +28,17 @@ const getIconForMaterial = (material) => {
 
 const RequestItem = ({ material, quantity, price, status }) => {
   return (
-    <View style={tw`bg-gray-300 p-6 ml-4 mr-4 rounded-lg shadow-md mb-2 mt-5`}>
+    <View style={tw`p-6 mt-5 mb-2 ml-4 mr-4 bg-gray-300 rounded-lg shadow-md`}>
       <View style={tw`flex-row items-center`}>
         <View>
           <FontAwesome5 name={getIconForMaterial(material)} size={70} />
           <Text style={tw`ml-4 text-lg font-bold`}>{material}</Text>
         </View>
 
-        <View style={tw`ml-auto items-end`}>
+        <View style={tw`items-end ml-auto`}>
           <Text style={tw`text-gray-600`}>Quantity (kg): {quantity}</Text>
-          <Text style={tw`text-red-500 my-1`}>Total Sell Price: LKR {price.toFixed(2)}</Text>
-          <Text style={status === 'Approved' ? tw`text-green-600 font-bold` : tw`text-yellow-600 font-bold`}>
+          <Text style={tw`my-1 text-red-500`}>Total Sell Price: LKR {price.toFixed(2)}</Text>
+          <Text style={status === 'Approved' ? tw`font-bold text-green-600` : tw`font-bold text-yellow-600`}>
             {status}
           </Text>
         </View>
@@ -65,7 +65,7 @@ const AllrequestItems = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.154:5000/api/requestitem/getallrequestitems"
+        "http://192.168.43.196:5000/api/requestitem/getallrequestitems"
       );
       setallrequest(response.data); // Assuming response.data contains the list of request items
     } catch (error) {
@@ -100,7 +100,7 @@ const AllrequestItems = () => {
           />
         ))
       ) : (
-        <Text style={tw`text-center mt-4`}>No request items available.</Text>
+        <Text style={tw`mt-4 text-center`}>No request items available.</Text>
       )}
     </ScrollView>
   );

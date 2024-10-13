@@ -20,7 +20,7 @@ const GarbageMap = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.154:5000/api/pickupgarbage/getallpickupgarbage"
+        "http://192.168.43.196:5000/api/pickupgarbage/getallpickupgarbage"
       );
       setPickupGarbage(response.data);
     } catch (error) {
@@ -160,7 +160,7 @@ const GarbageMap = () => {
         </Text>
         
         <TouchableOpacity onPress={handlePickupPress}>
-          <Text className='bg-green-600 p-2 rounded-lg text-sm text-white'>
+          <Text className='p-2 text-sm text-white bg-green-600 rounded-lg'>
             {showDirections ? "Hide Directions" : "Show Directions"}
           </Text>
         </TouchableOpacity>
