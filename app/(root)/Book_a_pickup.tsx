@@ -1,26 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView,Image } from 'react-native';
-import tw from 'twrnc'; // Import Tailwind CSS for React Native
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
-import { router } from 'expo-router';
-import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 import Garbagebag from "../../assets/images/garbageba.png";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import {GoogleTextInput} from "@/components/GoogleTextInput"
-import { useRoute } from "@react-navigation/native";
+import axios from 'axios';
+import GoogleTextInput from "@/components/GoogleTextInput";
+import  GooglePlacesAutocomplete  from 'react-native-google-places-autocomplete';
+import 'react-native-get-random-values';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
+const googlePlacesApiKey = "AIzaSyDa1olgsfiH0ktBXGGkG2P_PXy1f5bIUdE";
 
 const Book_a_pickup = () => {
-
-
-  const navigation = useNavigation(); // Hook for navigation inside the component
-  const [Location, setLocation] = useState('');
+  const navigation = useNavigation();
+  const [location, setLocation] = useState({});
   const [message, setMessage] = useState('');
-  const [selectedTypes, setSelectedTypes] = useState([]); // Changed to multiple selections
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [date, setDate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(false);
+  const [userid, setuserid] = useState(false);
 
   const garbageTypes = ['Papers', 'Plastic', 'Mentol', 'Cloths', 'E waste', 'Glass'];
 
-  // Function to handle multiple selections
   const toggleGarbageType = (type) => {
     if (selectedTypes.includes(type)) {
       setSelectedTypes(selectedTypes.filter((item) => item !== type));
@@ -29,114 +32,130 @@ const Book_a_pickup = () => {
     }
   };
 
+  const handlePickup = (location) => {
+    setLocation(location);
+  };
+
+
+  const handleSchedulePickUp = async () => {
+    setIsLoading(true);
+    try {
+      const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setuserid(
+            passengerDetails._id
+          );
+      const response = await axios.post('http://192.168.8.154:5000/api/pickupgarbage/addpickupgarbage', {
+        userid:userid,
+        location: location,
+        garbagetypes: selectedTypes,
+        message: message,
+        datetime: date.toISOString(),
+      });
+
+     
+        Alert.alert("Success", "Book pickup successfully!", [
+          { text: "OK", onPress: () => navigation.navigate('home') }
+        ]);
+      }
+
+    } catch (error) {
+      console.error('Error details:', error.response?.data);
+      Alert.alert(
+        "Error",
+        "Failed to Book pickup. Please try again later.",
+        [{ text: "OK" }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    
-    <ScrollView style={tw`flex-1 bg-white mt-5`}>
-      <View style={{ backgroundColor: '#0C6C41', padding: 16 ,marginTop:4 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <AntDesign name="arrowleft" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>Book a pickup</Text>
+    <View style={tw`flex-1 bg-white`}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={tw`flex-grow`}>
+        <View style={tw`bg-[#0C6C41] p-4 mt-6`}>
+          <View style={tw`flex-row items-center`}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <AntDesign name="arrowleft" size={24} color="white" />
+            </TouchableOpacity>
+            <Text style={tw`text-2xl font-bold text-white ml-4`}>Book a pickup</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={tw`p-5 mx-4 mt-5 mb-5 bg-green-100 rounded-lg`}>
-            <View style={tw`flex-row justify-between `}>
-              {/* Left Section: Product Info */}
-              <View style={tw`items-start mt-4 `}>
+        <View style={tw`p-5 mx-4 mt-5 mb-5 bg-green-100 rounded-lg`}>
+          <View style={tw`flex-row justify-between`}>
+            <View style={tw`items-start mt-4`}>
               <Image
-                    source={Garbagebag}
-                    style={{ width: 140, height: 140 }}
-                  />
-               
-              </View>
-
-              {/* Right Section: Price and Quantity */}
-              <View style={tw`flex-col items-end mt-12`}>
-                
-                <Text style={tw`text-xl font-bold text-gray-900`}>
-                Purche price Price
+                source={Garbagebag}
+                style={{ width: 140, height: 140 }}
+              />
+            </View>
+            <View style={tw`flex-col items-end mt-12`}>
+              <Text style={tw`text-xl font-bold text-gray-900`}>
+                Purchase price
               </Text>
               <Text style={tw`text-xl font-bold text-red-500`}>
-                LKR 
+               1Kg = LKR 250.00
               </Text>
-               
-
-              </View>
             </View>
-
-            {/* Total Price Section */}
-            
           </View>
-
-      {/* Stepper */}
-      <View style={tw`flex-row justify-between items-center mt-4 p-4`}>
-  {[1, 2, 3].map((step) => (
-    <View key={step} style={tw`flex-row items-center`}>
-      <View
-        style={tw`w-8 h-8 rounded-full border-2 ${
-          step === 1 ? 'bg-green-500 border-green-500' : ' border-green-300'
-        } flex items-center justify-center`}
-      >
-        <Text style={tw`${step === 1 ? 'text-white' : 'text-black'} font-bold`}>
-          {String(step).padStart(2, '0')}
-        </Text>
-      </View>
-      {step < 3 && <View style={tw`h-0.5 w-28 bg-green-300 ml-2`} />}
-    </View>
-  ))}
-</View>
-
-
-      {/* Address Input */}
-      <View style={tw` p-4`}>
-        <Text style={tw`text-gray-600 mb-2`}>Address</Text>
-        <TextInput
-          style={tw`border border-gray-300 rounded-md p-2`}
-          placeholder="Enter address"
-          onChangeText={setLocation}
-        />
-      </View>
-
-      {/* Garbage Type Selection (Multiple Choice) */}
-      <View style={tw`mb-4 p-4`}>
-        <Text style={tw`text-gray-600`}>Garbage type select here</Text>
-        <View style={tw`flex-row flex-wrap mt-4 ml-5`}>
-          {garbageTypes.map((type) => (
-            <TouchableOpacity
-              key={type}
-              style={tw`w-[28%] border rounded-md px-3 py-4 mr-4 mb-2 flex-row items-center justify-between ${
-                selectedTypes.includes(type) ? 'bg-blue-500 border-blue-500' : 'bg-transparent border-gray-300'
-              }`}
-              onPress={() => toggleGarbageType(type)}
-            >
-              <Text style={tw`${selectedTypes.includes(type) ? 'text-white' : 'text-gray-600'}`}>{type}</Text>
-              {selectedTypes.includes(type) && (
-                <Text style={tw`text-white font-bold`}>✓</Text>  // You can replace with icon if needed
-              )}
-            </TouchableOpacity>
-          ))}
         </View>
-      </View>
 
-      {/* Message Input */}
-      <Text style={tw`text-gray-600 p-4`}>Message</Text>
-      <TextInput
-        style={tw`border border-gray-300 rounded-md  h-24 p-4 ml-4 mr-4`}
-        multiline
-        placeholder="Write your comments here..."
-        textAlignVertical="top"
-        value={message}
-        onChangeText={setMessage}
-      />
+        <View style={tw`p-4`}>
+          <Text style={tw`text-gray-600 mb-2`}>Address</Text>
+          <GoogleTextInput
+                icon={null}
+                initialLocation={location ? location.address : null}
+                handlePress={handlePickup}
+                textInputBackgroundColor="white"
+                containerStyle="flex-1"
+              />
+        </View>
 
-      {/* Next Button */}
-      <TouchableOpacity style={tw`bg-black rounded-md py-3 mt-10 p-4 px-5 ml-4 mr-4 `}>
-        <Text style={tw`text-white text-center font-semiboldml-`}>Submit</Text>
-      </TouchableOpacity>
-      <View style={tw`mb-10`} />
-    </ScrollView>
+        <View style={tw`mb-4 p-4`}>
+          <Text style={tw`text-gray-600`}>Garbage type select here</Text>
+          <View style={tw`flex-row flex-wrap mt-4 ml-5`}>
+            {garbageTypes.map((type) => (
+              <TouchableOpacity
+                key={type}
+                style={tw`w-[28%] border rounded-md px-3 py-4 mr-4 mb-2 flex-row items-center justify-between ${
+                  selectedTypes.includes(type) ? 'bg-blue-500 border-blue-500' : 'bg-transparent border-gray-300'
+                }`}
+                onPress={() => toggleGarbageType(type)}
+              >
+                <Text style={tw`${selectedTypes.includes(type) ? 'text-white' : 'text-gray-600'}`}>{type}</Text>
+                {selectedTypes.includes(type) && (
+                  <Text style={tw`text-white font-bold`}>✓</Text>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View> 
+        </View>
+
+        <Text style={tw`text-gray-600 p-4`}>Message</Text>
+        <TextInput
+          style={tw`border border-gray-300 rounded-md h-24 p-4 ml-4 mr-4`}
+          multiline
+          placeholder="Write your comments here..."
+          textAlignVertical="top"
+          value={message}
+          onChangeText={setMessage}
+        />
+
+        <TouchableOpacity 
+          style={tw`bg-black rounded-md py-3 mt-10 p-4 px-5 ml-4 mr-4`} 
+          onPress={handleSchedulePickUp} 
+          disabled={isLoading}
+        >
+          <Text style={tw`text-white text-center font-semibold`}>Submit</Text>
+        </TouchableOpacity>
+
+        <View style={tw`mb-10`} />
+      </ScrollView>
+    </View>
   );
 };
 

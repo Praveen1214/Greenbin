@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 import Garbagetruck from "../../assets/images/garbagetruck.png";
 import Garbagebag from "../../assets/images/garbageba.png";
+import Entypo from '@expo/vector-icons/Entypo';
 
 const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete }) => {
   const [route, setRoute] = useState(null);
@@ -82,7 +83,7 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
       <View style={{ backgroundColor: '#0C6C41', padding: 16, marginTop: 24 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={onCloseTracking}>
-            <AntDesign name="arrowleft" size={24} color="white" />
+            <Entypo name="cross" size={30} color="white" />
           </TouchableOpacity>
           <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>
             Tracking
