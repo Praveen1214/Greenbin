@@ -114,6 +114,26 @@ router.route('/updaterequest/:id').put(async (req, res) => {
     }
 });
 
+router.route('/cancelrequest/:id').put(async (req, res) => {
+    const reqID = req.params.id;
+
+    try {
+        const updatedAppointment = await RequestItem.findByIdAndUpdate(
+            reqID,
+            { status: "Canceled" },
+            { new: true }
+        );
+
+        if (!updatedAppointment) {
+            return res.status(404).json({ status: "req not found" });
+        }
+
+        return res.status(200).json({ status: "req cancelled", updatedAppointment });
+    } catch (error) {
+        return res.status(500).json({ status: "Error cancelling req", message: error.message });
+    }
+});
+
 
 
 

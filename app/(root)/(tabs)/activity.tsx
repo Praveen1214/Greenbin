@@ -159,7 +159,6 @@ const RequestsList = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
@@ -170,13 +169,10 @@ const RequestsList = () => {
   useEffect(() => {
     const getPassengerDetails = async () => {
       try {
-        const passengerDetailsString =
-          await AsyncStorage.getItem("passengerDetails");
+        const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
-          setUserName(
-            passengerDetails.firstname + " " + passengerDetails.lastname
-          );
+          setUserName(passengerDetails.firstname + " " + passengerDetails.lastname);
           setEmail(passengerDetails.email);
           setContact(passengerDetails.contact);
           setGender(passengerDetails.gender);
@@ -188,17 +184,12 @@ const RequestsList = () => {
 
     getPassengerDetails();
 
-    if(contact) {
+    if (contact) {
       fetchRequests();
     }
   }, [contact]);
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
   const fetchRequests = async () => {
-
     try {
       const response = await axios.get(
         `http://192.168.43.196:5000/api/requestitem/getallrequestitems/${contact}`
@@ -210,27 +201,35 @@ const RequestsList = () => {
     }
   };
 
-  // Function to handle canceling the request
   const handleCancelRequest = async (item) => {
     try {
-      // Update the request status to "Canceled" via API
+      // Update the request status to "Canceled" using the backend API
       const response = await axios.put(
-        `http://192.168.43.196:5000/api/requestitem/updaterequest/${item._id}`,
-        { ...item, status: "Canceled" }
+        `http://192.168.43.196:5000/api/requestitem/cancelrequest/${item._id}`
       );
 
       if (response.status === 200) {
-        // Update the local state to reflect the canceled status
+        // If the API call succeeds, update the local state with the new status from the response
+        const updatedRequest = response.data.updatedAppointment;
+
         setRequests(prevRequests =>
-          prevRequests.map(req => req._id === item._id ? { ...req, status: "Canceled" } : req)
+          prevRequests.map(req => req._id === item._id ? { ...req, status: updatedRequest.status } : req)
         );
         setSelectedRequest(null); // Close the modal
         Alert.alert("Success", "Request has been canceled");
+      } else {
+        Alert.alert("Error", "Failed to cancel request. Please try again.");
       }
     } catch (error) {
       console.error("Error canceling request:", error);
       Alert.alert("Error", "Failed to cancel request. Please try again.");
     }
+  };
+
+
+  const handleEdit = (item) => {
+    setIsEditing(true);
+    setSelectedRequest(item);
   };
 
   const handleSave = async (editedItem) => {
@@ -253,7 +252,6 @@ const RequestsList = () => {
     }
   };
 
-  // Render each request item in the FlatList
   const renderItem = ({ item }) => (
     <View style={tw`p-4 mb-4 bg-white rounded-lg shadow-md`}>
       <View style={tw`flex-row items-center justify-between mb-2`}>
@@ -279,6 +277,7 @@ const RequestsList = () => {
       </TouchableOpacity>
     </View>
   );
+
   return (
     <View style={tw`flex-1 p-4 bg-gray-100`}>
       <Text style={tw`mb-4 text-2xl font-bold`}>Requests</Text>
@@ -307,7 +306,7 @@ const RequestsList = () => {
                   setIsEditing(false);
                 }}
                 onEdit={() => setIsEditing(true)}
-                onCancelRequest={handleCancelRequest} // Pass cancel handler // Pass cancel handler
+                onCancelRequest={handleCancelRequest} // Pass cancel handler
               />
             )}
             {selectedRequest && isEditing && (
@@ -320,11 +319,8 @@ const RequestsList = () => {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 };
 
-
 export default RequestsList;
-
