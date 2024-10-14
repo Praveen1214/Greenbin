@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert } fro
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
-import Garbagebag from "../../assets/images/garbageba.png";
+import Garbagebag from "@/assets/images/garbageba.png";
 import axios from 'axios';
 import GoogleTextInput from "@/components/GoogleTextInput";
 import  GooglePlacesAutocomplete  from 'react-native-google-places-autocomplete';
