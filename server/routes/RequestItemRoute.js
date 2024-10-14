@@ -152,6 +152,22 @@ router.route('/cancelrequest/:id').put(async (req, res) => {
     }
 });
 
+router.route('/deleterequest/:id').delete(async (req, res) => {
+
+    const reqId = req.params.id;
+
+    try {
+
+        await RequestItem.findByIdAndDelete(reqId);
+        return res.status(200).json({ status: "req is deleted" });
+
+    } catch (error) {
+
+        return res.status(400).json({ status: "Error with delete req", message: error });
+
+    }
+});
+
 
 
 
