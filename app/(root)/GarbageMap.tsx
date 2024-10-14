@@ -31,7 +31,7 @@ const GarbageMap = () => {
     try {
       const response = await axios.get(
 
-        "http://192.168.43.196:5000/api/pickupgarbage/getallpickupgarbage"
+        "http://192.168.8.154:5000/api/pickupgarbage/getallpickupgarbage"
 
       );
       setPickupGarbage(response.data);

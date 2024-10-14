@@ -47,7 +47,7 @@ const Book_a_pickup = () => {
           setuserid(
             passengerDetails._id
           );
-          const response = await axios.post('http://192.168.43.196:5000/api/pickupgarbage/addpickupgarbage', {
+          const response = await axios.post('http://192.168.8.154:5000/api/pickupgarbage/addpickupgarbage', {
         userid:userid,
         location: location,
         garbagetypes: selectedTypes,

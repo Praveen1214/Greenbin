@@ -192,11 +192,7 @@ const RequestsList = () => {
   const fetchRequests = async () => {
     try {
       const response = await axios.get(
-<<<<<<< HEAD
         `http://192.168.8.154:5000/api/requestitem/getallrequestitems/${contact}`
-=======
-        `http://192.168.8.174:5000/api/requestitem/getallrequestitems/${contact}`
->>>>>>> main
       );
       setRequests(response.data.req);
     } catch (error) {
@@ -209,11 +205,7 @@ const RequestsList = () => {
     try {
       // Update the request status to "Canceled" using the backend API
       const response = await axios.put(
-<<<<<<< HEAD
         `http://192.168.8.154:5000/api/requestitem/cancelrequest/${item._id}`
-=======
-        `http://192.168.8.174:5000/api/requestitem/cancelrequest/${item._id}`
->>>>>>> main
       );
 
       if (response.status === 200) {
@@ -243,11 +235,7 @@ const RequestsList = () => {
   const handleSave = async (editedItem) => {
     try {
       const response = await axios.put(
-<<<<<<< HEAD
         `http://192.168.8.154:5000/api/requestitem/updaterequest/${editedItem._id}`,
-=======
-        `http://192.168.8.174:5000/api/requestitem/updaterequest/${editedItem._id}`,
->>>>>>> main
         editedItem
       );
       if (response.status === 200) {

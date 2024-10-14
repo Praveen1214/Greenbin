@@ -45,7 +45,7 @@ const SignUp = () => {
 
 
       const response = await axios.post(
-        `http://192.168.8.174:5000/api/passenger/register`,
+        `http://192.168.8.154:5000/api/passenger/register`,
         {
           firstname: form.firstname,
           lastname: form.lastname,
@@ -59,7 +59,7 @@ const SignUp = () => {
       if (response.status === 200) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        const response = await axios.post(`http://192.168.8.174:5000/api/passenger/login`, {
+        const response = await axios.post(`http://192.168.8.154:5000/api/passenger/login`, {
 
           contact
         });
