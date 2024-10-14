@@ -210,28 +210,27 @@ const RequestsList = () => {
     }
   };
 
+  // Function to handle canceling the request
   const handleCancelRequest = async (item) => {
     try {
+      // Update the request status to "Canceled" via API
       const response = await axios.put(
         `http://192.168.43.196:5000/api/requestitem/updaterequest/${item._id}`,
         { ...item, status: "Canceled" }
       );
+
       if (response.status === 200) {
+        // Update the local state to reflect the canceled status
         setRequests(prevRequests =>
           prevRequests.map(req => req._id === item._id ? { ...req, status: "Canceled" } : req)
         );
-        setSelectedRequest(null);
+        setSelectedRequest(null); // Close the modal
         Alert.alert("Success", "Request has been canceled");
       }
     } catch (error) {
       console.error("Error canceling request:", error);
       Alert.alert("Error", "Failed to cancel request. Please try again.");
     }
-  };
-
-  const handleEdit = (item) => {
-    setIsEditing(true);
-    setSelectedRequest(item);
   };
 
   const handleSave = async (editedItem) => {
@@ -254,6 +253,7 @@ const RequestsList = () => {
     }
   };
 
+  // Render each request item in the FlatList
   const renderItem = ({ item }) => (
     <View style={tw`p-4 mb-4 bg-white rounded-lg shadow-md`}>
       <View style={tw`flex-row items-center justify-between mb-2`}>
@@ -269,17 +269,16 @@ const RequestsList = () => {
       </View>
       <View style={tw`flex-row justify-between`}>
         <Text>Quantity(kg): {item.quantity}</Text>
-        <Text>Total Sell Price LKR {item.totalSellPrice.toFixed(2)}</Text>
+        <Text>Total Sell Price: LKR {item.totalSellPrice.toFixed(2)}</Text>
       </View>
-      <Text style={tw`mt-2 ${item.status === "Approved" ? "text-green-500" : "text-yellow-500"}`}>
-        {item.status}
+      <Text style={tw`mt-2 ${item.status === "Approved" ? "text-green-500" : item.status === "Canceled" ? "text-red-500" : "text-yellow-500"}`}>
+        {item.status} {/* Displays status (Pending, Approved, Canceled) */}
       </Text>
       <TouchableOpacity style={tw`mt-2`} onPress={() => setSelectedRequest(item)}>
         <Text style={tw`text-blue-500`}>View Request Details</Text>
       </TouchableOpacity>
     </View>
   );
-
   return (
     <View style={tw`flex-1 p-4 bg-gray-100`}>
       <Text style={tw`mb-4 text-2xl font-bold`}>Requests</Text>
@@ -308,7 +307,7 @@ const RequestsList = () => {
                   setIsEditing(false);
                 }}
                 onEdit={() => setIsEditing(true)}
-                onCancelRequest={handleCancelRequest} // Pass cancel handler
+                onCancelRequest={handleCancelRequest} // Pass cancel handler // Pass cancel handler
               />
             )}
             {selectedRequest && isEditing && (
