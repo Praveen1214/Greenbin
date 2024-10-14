@@ -50,8 +50,7 @@ export default function QRCodeScanner() {
               onPress: () => {
                 // Check if WeightInputScreen is defined in the navigation
                 if (navigation.getState().routeNames.includes('WeightInputScreen')) {
-                  navigation.navigate('WeightInputScreen', { request: bookingDetails });
-                } else {
+                  navigation.navigate('WeightInputScreen', { request: bookingDetails });                } else {
                   console.error('WeightInputScreen is not defined in the navigation stack');
                   Alert.alert('Error', 'Unable to navigate to Weight Input Screen');
                 }
