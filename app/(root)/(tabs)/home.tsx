@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import LOGOIMG from "assets/images/home.png";
 
 
 const HomeScreen = () => {
@@ -53,53 +54,57 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView
-      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
+      className={`flex-1 bg-white ${platformSpecificStyle} text-black`}
     >
       <ScrollView style={{ flex: 1 }}>
+        {/* Header Section */}
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 16
+            padding: 16,
+            backgroundColor: "#4CAF50" // Green background to match the image design
           }}
         >
           <View>
-            <Text style={{ color: "#4CAF50", fontSize: 14 }}>Welcome</Text>
-            <Text style={{ color: "black", fontSize: 24, fontWeight: "bold" }}>
-              {" "}
-              {userName}{" "}
+            <Text style={{ color: "white", fontSize: 14 }}> Welcome </Text>
+            <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>
+              {userName}
             </Text>
           </View>
           <TouchableOpacity style={{ padding: 8 }}>
-            <Feather name="bell" size={24} color="black" />
+            <Feather name="bell" size={24} color="white" />
           </TouchableOpacity>
         </View>
 
+        {/* Card Section */}
         <View
           style={{
             backgroundColor: "white",
-            borderRadius: 30,
+            borderRadius: 20,
             margin: 16,
             padding: 24,
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center"
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+            elevation: 5
           }}
         >
           <View style={{ flex: 1 }}>
-            <Text style={{ color: "black", fontSize: 20, fontWeight: "bold" }}>
+            <Text style={{ color: "black", fontSize: 20 }}>
               Don't throw away,
             </Text>
-            <Text style={{ color: "black", fontSize: 20, fontWeight: "bold" }}>
+            <Text style={{ color: "black", fontSize: 20 }}>
               recycle for another day
             </Text>
             <Text
               style={{
-                color: "#4CAF50",
-                fontSize: 18,
-                fontWeight: "semibold",
-                marginTop: 8
+                color: "black", fontSize: 20, fontWeight: "bold"
               }}
             >
               Recycle with us
@@ -108,8 +113,8 @@ const HomeScreen = () => {
               style={{
                 backgroundColor: "#4CAF50",
                 borderRadius: 9999,
-                paddingVertical: 8,
-                paddingHorizontal: 24,
+                paddingVertical: 10,
+                paddingHorizontal: 30,
                 alignSelf: "flex-start",
                 marginTop: 16
               }}
@@ -119,13 +124,15 @@ const HomeScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
+          {/* Updated Image */}
           <Image
-            source={{ uri: "https://example.com/recycling-illustration.png" }}
-            style={{ width: 128, height: 128 }}
+            source={ LOGOIMG }
+            style={{ width: 138, height: 138 }}
             resizeMode="contain"
           />
         </View>
 
+        {/* Action Buttons */}
         <View
           style={{
             flexDirection: "row",
@@ -139,10 +146,12 @@ const HomeScreen = () => {
               icon: "truck",
               text: "Book a Pickup",
               navigateTo: "Book_a_pickup"
+
             }, // Added navigateTo property
           { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
             { icon: "book-open", text: "Learn" , navigateTo: "Scan"},
             { icon: "file-text", text: "News" ,navigateTo:"QRCodeGenerator"}
+
 
           ].map((item, index) => (
             <TouchableOpacity
@@ -162,7 +171,7 @@ const HomeScreen = () => {
               }}
               onPress={() =>
                 item.navigateTo ? navigation.navigate(item.navigateTo) : null
-              } // Navigate to the page if navigateTo exists
+              }
             >
               <View
                 style={{
@@ -181,6 +190,7 @@ const HomeScreen = () => {
           ))}
         </View>
 
+        {/* Contact Us Section */}
         <Text
           style={{
             color: "black",
@@ -257,7 +267,6 @@ const HomeScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-  
       </ScrollView>
     </SafeAreaView>
   );
