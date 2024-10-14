@@ -9,10 +9,13 @@ import {
   Platform
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Use expo-router's router hook
 import { useNavigation } from "@react-navigation/native";
 import { useUserDetails } from "../hooks/useUserDetails"; // Importing the custom hook
 
 const HomeScreen = () => {
+  const router = useRouter(); // Initialize the router for navigation
+
   const navigation = useNavigation();
   const { userName } = useUserDetails(); // Use the custom hook for user data
 
@@ -21,16 +24,18 @@ const HomeScreen = () => {
     android: "mt-2 mb-2"
   });
 
-  const navigateTo = (screen: string) => {
-    navigation.navigate(screen);
-  };
+// Function to navigate to specific screen
+const navigateTo = (screen: string) => {
+  router.push(screen); // Use router.push for expo-router navigation
+};
 
-  const menuItems = [
-    { icon: "truck", text: "Book a Pickup", navigateTo: "Book_a_pickup" },
-    { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
-    { icon: "book-open", text: "Learn", navigateTo: "Scan" },
-    { icon: "file-text", text: "News", navigateTo: "QRCodeGenerator" }
-  ];
+const menuItems = [
+  { icon: "truck", text: "Shedule", navigateTo: "(requests)/residenceRequests/Book_a_pickup" }, // Correct path
+  { icon: "refresh-cw", text: "Recycle", navigateTo: "(requests)/factroyRequests/Recycle" },
+  { icon: "book-open", text: "Learn", navigateTo: "(requests)/residenceRequests/QRCodeScanner" },
+  { icon: "file-text", text: "News", navigateTo: "QRCodeGenerator" }
+];
+  
 
   return (
     <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
