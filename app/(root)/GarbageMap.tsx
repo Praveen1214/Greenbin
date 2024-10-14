@@ -14,7 +14,7 @@ import axios from "axios";
 import Garbagebag from "../../assets/images/garbageba.png";
 import Garbagetruck from "../../assets/images/garbagetruck.png";
 import * as Location from "expo-location";
-import Track from "./Track";
+import Track from "../(root)/(driver)/Track";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router"; // Use the router for navigation
 
