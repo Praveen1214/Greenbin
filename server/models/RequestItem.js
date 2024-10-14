@@ -42,7 +42,7 @@ const requestItemSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "Pending",
-        enum : ["Pending", "Approved", "Rejected", "Canceled"]
+        enum: ["Pending", "Approved", "Rejected", "Canceled", "Completed"]
     },
     contact: {
         type: String,

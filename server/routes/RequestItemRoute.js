@@ -152,24 +152,22 @@ router.route('/cancelrequest/:id').put(async (req, res) => {
     }
 });
 
-// Delete a request item by ID
-router.delete('/deleterequest/:id', async (req, res) => {
-    const id = req.params.id;
-    console.log(`Deleting request with ID: ${id}`);  // Log for debugging
+router.route('/deleterequest/:id').delete(async (req, res) => {
+
+    const reqId = req.params.id;
 
     try {
-        const deletedRequest = await RequestItem.findByIdAndDelete(id);
-        if (!deletedRequest) {
-            return res.status(404).json({ status: "Request not found" });
-        }
-        return res.status(200).json({ status: "Request deleted" });
+
+        await RequestItem.findByIdAndDelete(reqId);
+        return res.status(200).json({ status: "req is deleted" });
+
     } catch (error) {
-        console.error("Error deleting request:", error);
-        return res.status(400).json({ status: "Error deleting request", message: error.message });
+
+        return res.status(400).json({ status: "Error with delete req", message: error });
+
     }
 });
 
-  
 
 
 

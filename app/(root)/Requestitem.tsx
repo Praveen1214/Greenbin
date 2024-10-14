@@ -141,9 +141,9 @@ const RequestItem = () => {
   return (
     <TailwindProvider>
       <View style={tw`flex-1 bg-gray-100`}>
-        <View style={tw`bg-[#0C6C41] p-4 mt-6`}>
+        <View style={tw`bg-[#4CAF50] p-4 mt-6`}>
           <View style={tw`flex-row items-center`}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={() => console.log("Back pressed")}>
               <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableOpacity>
             <Text style={tw`ml-4 text-2xl font-bold text-white`}>
@@ -154,50 +154,66 @@ const RequestItem = () => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Product Card */}
-          <View style={tw`p-5 mx-4 mt-4 mb-5 bg-green-100 rounded-lg`}>
-            <View style={tw`flex-row justify-between p-5`}>
+          <View
+            style={[
+              tw`p-5 mx-4 mt-4 mb-5 bg-green-100 rounded-lg`,
+              {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5 // Android shadow
+              }
+            ]}
+          >
+            <View style={tw`flex-row justify-between`}>
               {/* Left Section: Product Info */}
-              <View style={tw`items-start mt-12`}>
+              <View style={tw`items-start mt-4`}>
                 {getGarbageTypeIcon()}
-                <Text style={tw`mt-2 text-lg`}> {category} </Text>
+                <Text style={tw`mt-2 text-lg font-semibold text-gray-900`}>
+                  Plastic
+                </Text>
               </View>
 
               {/* Right Section: Price and Quantity */}
               <View style={tw`flex-col items-end`}>
+                {/* Price Info */}
                 <View style={tw`mb-4`}>
-                  <Text style={tw`mb-2 text-sm text-gray-700`}>
-                    {" "}
-                    Sell Price{" "}
+                  <Text style={tw`text-sm font-semibold text-gray-700`}>
+                    Sell Price
                   </Text>
-                  <Text style={tw`text-sm text-gray-700`}>
+                  <Text style={tw`text-sm text-[#CE6E00]`}>
                     1 kg - LKR 250.00
                   </Text>
                 </View>
-                <Text style={tw`mb-4 ml-4 mr-2 text-lg`}> Quantity(kg) </Text>
-                <View style={tw`flex-row items-center mr-1`}>
+
+                {/* Quantity Info */}
+                <View style={tw`flex-row items-center`}>
                   <TouchableOpacity
                     onPress={handleDecrement}
-                    style={tw`w-6 p-1 bg-green-500 rounded`}
+                    style={tw`items-center justify-center w-10 h-10 bg-green-500 rounded-full`}
                   >
-                    <Text style={tw`items-center ml-1 text-lg`}> -</Text>
+                    <Text style={tw`text-lg font-bold text-white`}> -</Text>
                   </TouchableOpacity>
-                  <Text style={tw`mx-5 text-lg`}> {quantity} </Text>
+                  <Text style={tw`mx-5 text-lg font-semibold text-gray-900`}>
+                    {quantity}
+                  </Text>
                   <TouchableOpacity
                     onPress={handleIncrement}
-                    style={tw`w-6 p-1 bg-green-500 rounded`}
+                    style={tw`items-center justify-center w-10 h-10 bg-green-500 rounded-full`}
                   >
-                    <Text style={tw`ml-1 text-lg`}> +</Text>
+                    <Text style={tw`text-lg font-bold text-white`}> +</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
 
             {/* Total Price Section */}
-            <View style={tw`ml-48`}>
-              <Text style={tw`text-xl font-bold text-gray-900`}>
-                Total Price
+            <View style={tw`mt-8`}>
+              <Text style={tw`text-lg font-bold text-gray-900`}>
+                Total Sell Price
               </Text>
-              <Text style={tw`text-xl font-bold text-red-500`}>
+              <Text style={tw`text-2xl font-bold text-red-500`}>
                 LKR {totalSellPrice.toFixed(2)}
               </Text>
             </View>

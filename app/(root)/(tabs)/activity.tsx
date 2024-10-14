@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, Modal, ScrollView, TextInput, Alert } from "react-native";
-import { FontAwesome5, MaterialCommunityIcons, AntDesign, Feather } from "@expo/vector-icons";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+  TextInput,
+  Alert
+} from "react-native";
+import {
+  FontAwesome5,
+  MaterialCommunityIcons,
+  AntDesign,
+  Feather
+} from "@expo/vector-icons";
 import axios from "axios";
 import tw from "twrnc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,7 +27,9 @@ const getIcon = (category) => {
     case "Paper":
       return <FontAwesome5 name="newspaper" size={50} color="black" />;
     case "Plastic":
-      return <MaterialCommunityIcons name="bottle-soda" size={50} color="black" />;
+      return (
+        <MaterialCommunityIcons name="bottle-soda" size={50} color="black" />
+      );
     case "Metal":
       return <FontAwesome5 name="tools" size={50} color="black" />;
     case "Clothes":
@@ -48,10 +64,14 @@ const RequestDetails = ({ item, onClose, onEdit, onCancelRequest }) => (
       <Text style={tw`mb-2 text-lg font-semibold`}>Request Details</Text>
       <View style={tw`p-4 mb-4 bg-gray-100 rounded-lg`}>
         <Text style={tw`mb-2`}>Quantity: {item.quantity} kg</Text>
-        <Text style={tw`mb-2`}>Total Sell Price: LKR {item.totalSellPrice.toFixed(2)}</Text>
+        <Text style={tw`mb-2`}>
+          Total Sell Price: LKR {item.totalSellPrice.toFixed(2)}
+        </Text>
         <Text style={tw`mb-2`}>
           Status:{" "}
-          <Text style={tw`${item.status === "Approved" ? "text-green-500" : "text-yellow-500"} font-semibold`}>
+          <Text
+            style={tw`${item.status === "Approved" ? "text-green-500" : "text-yellow-500"} font-semibold`}
+          >
             {item.status}
           </Text>
         </Text>
@@ -81,7 +101,7 @@ const EditRequestForm = ({ item, onSave, onCancel }) => {
   const [editedItem, setEditedItem] = useState(item);
 
   const handleChange = (field, value) => {
-    setEditedItem(prev => ({ ...prev, [field]: value }));
+    setEditedItem((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
@@ -91,33 +111,35 @@ const EditRequestForm = ({ item, onSave, onCancel }) => {
   return (
     <ScrollView style={tw`flex-1 p-6 bg-white`}>
       <Text style={tw`mb-4 text-2xl font-bold`}>Edit Request</Text>
-      <Text style={tw`mb-2 mb-3 font-bold`}>Category: {editedItem.category}</Text>
+      <Text style={tw`mb-2 mb-3 font-bold`}>
+        Category: {editedItem.category}
+      </Text>
       <Text style={tw`mb-2`}>Factory Name</Text>
       <TextInput
         style={tw`p-2 mb-4 border border-gray-300 rounded`}
         value={editedItem.factoryName}
-        onChangeText={(value) => handleChange('factoryName', value)}
+        onChangeText={(value) => handleChange("factoryName", value)}
         placeholder="Factory Name"
       />
       <Text style={tw`mb-2`}>Factory Address</Text>
       <TextInput
         style={tw`p-2 mb-4 border border-gray-300 rounded`}
         value={editedItem.factoryAddress}
-        onChangeText={(value) => handleChange('factoryAddress', value)}
+        onChangeText={(value) => handleChange("factoryAddress", value)}
         placeholder="Factory Address"
       />
       <Text style={tw`mb-2`}>Beneficiary Name</Text>
       <TextInput
         style={tw`p-2 mb-4 border border-gray-300 rounded`}
         value={editedItem.beneficiaryName}
-        onChangeText={(value) => handleChange('beneficiaryName', value)}
+        onChangeText={(value) => handleChange("beneficiaryName", value)}
         placeholder="Beneficiary Name"
       />
       <Text style={tw`mb-2`}>Bank</Text>
       <View style={tw`p-2 mb-4 border border-gray-300 rounded-lg`}>
         <Picker
           selectedValue={editedItem.bank} // Set the selected value from editedItem.bank
-          onValueChange={(itemValue) => handleChange('bank', itemValue)} // Update the bank field on change
+          onValueChange={(itemValue) => handleChange("bank", itemValue)} // Update the bank field on change
         >
           <Picker.Item label="Select Bank" value="" />
           <Picker.Item label="BOC" value="BOC" />
@@ -137,15 +159,21 @@ const EditRequestForm = ({ item, onSave, onCancel }) => {
       <TextInput
         style={tw`p-2 mb-4 border border-gray-300 rounded`}
         value={editedItem.accountNo}
-        onChangeText={(value) => handleChange('accountNo', value)}
+        onChangeText={(value) => handleChange("accountNo", value)}
         placeholder="Account No"
         keyboardType="numeric"
       />
       <View style={tw`flex-row justify-between`}>
-        <TouchableOpacity style={tw`px-4 py-2 bg-blue-500 rounded`} onPress={handleSave}>
+        <TouchableOpacity
+          style={tw`px-4 py-2 bg-blue-500 rounded`}
+          onPress={handleSave}
+        >
           <Text style={tw`font-bold text-white`}>Save</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={tw`px-4 py-2 bg-gray-500 rounded`} onPress={onCancel}>
+        <TouchableOpacity
+          style={tw`px-4 py-2 bg-gray-500 rounded`}
+          onPress={onCancel}
+        >
           <Text style={tw`font-bold text-white`}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -169,10 +197,13 @@ const RequestsList = () => {
   useEffect(() => {
     const getPassengerDetails = async () => {
       try {
-        const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
-          setUserName(passengerDetails.firstname + " " + passengerDetails.lastname);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
           setEmail(passengerDetails.email);
           setContact(passengerDetails.contact);
           setGender(passengerDetails.gender);
@@ -212,8 +243,12 @@ const RequestsList = () => {
         // If the API call succeeds, update the local state with the new status from the response
         const updatedRequest = response.data.updatedAppointment;
 
-        setRequests(prevRequests =>
-          prevRequests.map(req => req._id === item._id ? { ...req, status: updatedRequest.status } : req)
+        setRequests((prevRequests) =>
+          prevRequests.map((req) =>
+            req._id === item._id
+              ? { ...req, status: updatedRequest.status }
+              : req
+          )
         );
         setSelectedRequest(null); // Close the modal
         Alert.alert("Success", "Request has been canceled");
@@ -225,7 +260,6 @@ const RequestsList = () => {
       Alert.alert("Error", "Failed to cancel request. Please try again.");
     }
   };
-
 
   const handleEdit = (item) => {
     setIsEditing(true);
@@ -239,8 +273,10 @@ const RequestsList = () => {
         editedItem
       );
       if (response.status === 200) {
-        setRequests(prevRequests =>
-          prevRequests.map(req => req._id === editedItem._id ? editedItem : req)
+        setRequests((prevRequests) =>
+          prevRequests.map((req) =>
+            req._id === editedItem._id ? editedItem : req
+          )
         );
         setIsEditing(false);
         setSelectedRequest(null);
@@ -269,18 +305,29 @@ const RequestsList = () => {
         <Text>Quantity(kg): {item.quantity}</Text>
         <Text>Total Sell Price: LKR {item.totalSellPrice.toFixed(2)}</Text>
       </View>
-      <Text style={tw`mt-2 ${item.status === "Approved" ? "text-green-500" : item.status === "Canceled" ? "text-red-500" : "text-yellow-500"}`}>
+      <Text
+        style={tw`mt-2 ${item.status === "Approved" ? "text-green-500" : item.status === "Canceled" ? "text-red-500" : "text-yellow-500"}`}
+      >
         {item.status} {/* Displays status (Pending, Approved, Canceled) */}
       </Text>
-      <TouchableOpacity style={tw`mt-2`} onPress={() => setSelectedRequest(item)}>
+      <TouchableOpacity
+        style={tw`mt-2`}
+        onPress={() => setSelectedRequest(item)}
+      >
         <Text style={tw`text-blue-500`}>View Request Details</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={tw`flex-1 p-4 bg-gray-100`}>
-      <Text style={tw`mb-4 text-2xl font-bold`}>Requests</Text>
+    <View style={tw`flex-1 bg-gray-100`}>
+      <View style={tw`bg-[#4CAF50] p-10 flex-row items-center mb-5`}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={tw`ml-4 text-2xl font-bold text-white`}>Requests</Text>
+      </View>
+
       <FlatList
         data={requests}
         renderItem={renderItem}
@@ -296,7 +343,9 @@ const RequestsList = () => {
           setIsEditing(false);
         }}
       >
-        <View style={tw`items-center justify-center flex-1 bg-black bg-opacity-50`}>
+        <View
+          style={tw`items-center justify-center flex-1 bg-black bg-opacity-50`}
+        >
           <View style={tw`w-11/12 overflow-hidden bg-white rounded-lg h-5/6`}>
             {selectedRequest && !isEditing && (
               <RequestDetails
