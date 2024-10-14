@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Alert, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import axios from 'axios';
-import { useNavigation, useRoute } from '@react-navigation/native'; // Import both hooks
+import { getPickupByUserId } from '../../services/PickupService';
+import { decodeQRData } from '../../../utils/qrDecoder';
+import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 export default function QRCodeScanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState(null);
   const [rawData, setRawData] = useState('');
-  const navigation = useNavigation(); // Use the hook to get navigation object
-  const route = useRoute(); // Use the hook to get route object
+  const [loading, setLoading] = useState(false);
+  const [flashOn, setFlashOn] = useState(false);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -22,21 +26,20 @@ export default function QRCodeScanner() {
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     setRawData(data);
+    setLoading(true);
+
     try {
       console.log('Raw scanned data:', data);
-      const decodedData = decodeURIComponent(data);
-      console.log('Decoded data:', decodedData);
-      const bookingDetails = JSON.parse(decodedData);
+      const bookingDetails = decodeQRData(data);
       setScannedData(bookingDetails);
-  
+
       console.log('Booking details:', bookingDetails);
-  
-      // Use the correct userid from the QR code
-      const response = await axios.get(
-        `http://192.168.8.187:5000/api/pickupgarbage/getbyuserid/${bookingDetails._id}`
-      );
-  
-      if (response.data.length > 0) {
+      
+      const pickupData = await getPickupByUserId(bookingDetails._id);
+
+      setLoading(false);
+
+      if (pickupData.length > 0) {
         Alert.alert(
           'QR Code Scanned Successfully',
           'Would you like to proceed to weight input?',
@@ -46,11 +49,11 @@ export default function QRCodeScanner() {
               style: 'cancel',
             },
             {
-              text: 'OK',
+              text: 'Proceed',
               onPress: () => {
-                // Check if WeightInputScreen is defined in the navigation
                 if (navigation.getState().routeNames.includes('WeightInputScreen')) {
-                  navigation.navigate('WeightInputScreen', { request: bookingDetails });                } else {
+                  navigation.navigate('WeightInputScreen', { request: bookingDetails });
+                } else {
                   console.error('WeightInputScreen is not defined in the navigation stack');
                   Alert.alert('Error', 'Unable to navigate to Weight Input Screen');
                 }
@@ -63,52 +66,135 @@ export default function QRCodeScanner() {
       }
     } catch (error) {
       console.error('Error processing QR code:', error);
-      if (error.response && error.response.status === 404) {
-        Alert.alert('Error', 'No pickups found for this user.');
-      } else {
-        Alert.alert('Error', `Failed to process the QR code: ${error.message}`);
-      }
+      setLoading(false);
+      Alert.alert('Error', error.message || 'Failed to process the QR code.');
       setScannedData(null);
     }
   };
 
+  const toggleFlash = () => {
+    setFlashOn(!flashOn);
+  };
+
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text>Requesting camera permission...</Text>;
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
 
   return (
-    <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={styles.scanner}
-      />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Scan QR Code</Text>
+        <TouchableOpacity onPress={toggleFlash} style={styles.flashButton}>
+          <MaterialIcons 
+            name={flashOn ? "flash-on" : "flash-off"} 
+            size={24} 
+            color="white" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.scannerContainer}>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+          flashMode={flashOn ? 'torch' : 'off'}
+        />
+        <View style={styles.scannerOverlay}>
+          <View style={styles.scannerMarker} />
+        </View>
+      </View>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4CAF50" />
+          <Text style={styles.loadingText}>Processing QR Code...</Text>
+        </View>
+      )}
+
       <ScrollView style={styles.dataContainer}>
-        <Text style={styles.title}>Scanned QR Code Data:</Text>
-        <Text style={styles.rawData}>Raw data: {rawData}</Text>
+        {scannedData && (
+          <>
+            <Text style={styles.title}>Scanned QR Code Data:</Text>
+            <Text style={styles.rawData}>{JSON.stringify(scannedData, null, 2)}</Text>
+          </>
+        )}
       </ScrollView>
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => {
-        setScanned(false);
-        setScannedData(null);
-        setRawData('');
-      }} />}
-    </View>
+
+      {scanned && (
+        <TouchableOpacity
+          style={styles.scanAgainButton}
+          onPress={() => {
+            setScanned(false);
+            setScannedData(null);
+            setRawData('');
+          }}
+        >
+          <Text style={styles.scanAgainButtonText}>Tap to Scan Again</Text>
+        </TouchableOpacity>
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#4CAF50',
+    padding: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  backButton: {
+    padding: 8,
+  },
+  flashButton: {
+    padding: 8,
+  },
+  scannerContainer: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  scannerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  scannerMarker: {
+    width: 250,
+    height: 250,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+    backgroundColor: 'transparent',
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  scanner: {
-    flex: 1,
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#4CAF50',
   },
   dataContainer: {
-    flex: 1,
+    maxHeight: 200,
     padding: 20,
     backgroundColor: 'white',
   },
@@ -116,9 +202,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
   rawData: {
     marginTop: 10,
     fontStyle: 'italic',
+    color: '#666',
+  },
+  scanAgainButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    margin: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  scanAgainButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

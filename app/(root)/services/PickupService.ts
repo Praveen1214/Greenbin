@@ -1,7 +1,7 @@
 // services/PickupService.ts
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'http://192.168.8.187:5000/api/pickupgarbage';
+const BASE_URL = "http://192.168.8.187:5000/api/pickupgarbage";
 
 // Fetch pickup data by request ID
 export const fetchPickupDataByUserId = async (requestId) => {
@@ -10,10 +10,10 @@ export const fetchPickupDataByUserId = async (requestId) => {
     if (response.data?.length > 0) {
       return response.data[0];
     } else {
-      throw new Error('No pickup data found for this request.');
+      throw new Error("No pickup data found for this request.");
     }
   } catch (error) {
-    throw new Error('Failed to fetch pickup data.');
+    throw new Error("Failed to fetch pickup data.");
   }
 };
 
@@ -27,5 +27,15 @@ export const submitWeights = async (bookingId, weights) => {
     return response.data;
   } catch (error) {
     throw new Error(`Failed to update weights: ${error.message}`);
+  }
+};
+
+export const getPickupByUserId = async (userId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getbyuserid/${userId}`);
+
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };
