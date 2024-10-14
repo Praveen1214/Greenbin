@@ -256,11 +256,7 @@ const HomeScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("GarbageMap")}>
-          <View className="ml-10">
-            <Text>Driver</Text>
-          </View>
-        </TouchableOpacity>
+  
       </ScrollView>
     </SafeAreaView>
   );

@@ -52,10 +52,19 @@ const OTPVerificationScreen = () => {
           // Store user details in AsyncStorage
           await AsyncStorage.setItem('passengerDetails', JSON.stringify(passengerDetails));
 
+          if (passengerDetails.role === "Driver") {
+            router.push({
+              pathname: "/(root)/GarbageMap",
+            });
+          }
+          else {
+            router.push({
+              pathname: "/(tabs)/home",
+            });
+          }
+
           // Navigate to HomeScreen
-          router.push({
-            pathname: "/(tabs)/home",
-          });
+          
         } else {
           Alert.alert("Login Failed", "Contact number is incorrect");
         }
