@@ -41,6 +41,15 @@ const pickUpGarbageSchema = new Schema({
         type: String,
         required: false,
     },
+    weights: {
+        type: Map,  // A map where key is the garbage type and value is the weight in kg
+        of: Number,
+        default: {},
+    },
+    totalCost: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const PickupGarbage = mongoose.model('pickupgarbage', pickUpGarbageSchema);
