@@ -3,10 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'reac
 import tw from 'twrnc'; // Tailwind CSS for React Native
 import { router } from 'expo-router';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import paypal from "../../assets/images/paypal.png"
-import master from "../../assets/images/master.png" 
-import discover from "../../assets/images/discover.png" 
-import amex from "../../assets/images/amex.png" 
+import paypal from "@/assets/images/paypal.png"
+import master from "@/assets/images/master.png" 
+import discover from "@/assets/images/discover.png" 
+import amex from "@/assets/images/amex.png" 
 
 const PaymentForm = () => {
   const [cardholderName, setCardholderName] = useState('');

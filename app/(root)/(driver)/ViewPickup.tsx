@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import tw from 'twrnc'; // Tailwind CSS for React Native
-import Garbagebag from "../../assets/images/garbageba.png"
+import Garbagebag from "@/assets/images/garbageba.png"
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import { router } from 'expo-router';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';

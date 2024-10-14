@@ -42,14 +42,14 @@ export default function WeightInput() {
   };
 
   const handleCalculate = async () => {
-    if (!request) {
+    if (!request || !request._id) {
       Alert.alert('Error', 'No request data available.');
       return;
     }
 
     try {
       const response = await axios.post("http://192.168.8.187:5000/api/pickupgarbage/updateweights", {
-        userId : request,
+        userId: request._id, // Use the _id field from the request object
         weights: weights,
       });
 
@@ -66,7 +66,7 @@ export default function WeightInput() {
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', 'Failed to update weights and calculate cost. Please try again.');
+      Alert.alert('Error', `Failed to update weights and calculate cost: ${error.message}`);
     }
   };
 
