@@ -26,8 +26,8 @@ const passengerSchema = new Schema({
     },   
     role: {
         type: String,
-        default: 'Passenger',
-        enum: ['Passenger', 'Driver']
+        default: 'User',
+        enum: ['User', 'Driver']
     }
 });
 

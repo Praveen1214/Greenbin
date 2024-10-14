@@ -47,7 +47,7 @@ const Book_a_pickup = () => {
           setuserid(
             passengerDetails._id
           );
-      const response = await axios.post('http://192.168.8.174:5000/api/pickupgarbage/addpickupgarbage', {
+          const response = await axios.post('http://192.168.43.196:5000/api/pickupgarbage/addpickupgarbage', {
         userid:userid,
         location: location,
         garbagetypes: selectedTypes,
@@ -81,7 +81,7 @@ const Book_a_pickup = () => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableOpacity>
-            <Text style={tw`text-2xl font-bold text-white ml-4`}>Book a pickup</Text>
+            <Text style={tw`ml-4 text-2xl font-bold text-white`}>Book a pickup</Text>
           </View>
         </View>
 
@@ -105,7 +105,7 @@ const Book_a_pickup = () => {
         </View>
 
         <View style={tw`p-4`}>
-          <Text style={tw`text-gray-600 mb-2`}>Address</Text>
+          <Text style={tw`mb-2 text-gray-600`}>Address</Text>
           <GoogleTextInput
                 icon={null}
                 initialLocation={location ? location.address : null}
@@ -115,7 +115,7 @@ const Book_a_pickup = () => {
               />
         </View>
 
-        <View style={tw`mb-4 p-4`}>
+        <View style={tw`p-4 mb-4`}>
           <Text style={tw`text-gray-600`}>Garbage type select here</Text>
           <View style={tw`flex-row flex-wrap mt-4 ml-5`}>
             {garbageTypes.map((type) => (
@@ -128,16 +128,16 @@ const Book_a_pickup = () => {
               >
                 <Text style={tw`${selectedTypes.includes(type) ? 'text-white' : 'text-gray-600'}`}>{type}</Text>
                 {selectedTypes.includes(type) && (
-                  <Text style={tw`text-white font-bold`}>✓</Text>
+                  <Text style={tw`font-bold text-white`}>✓</Text>
                 )}
               </TouchableOpacity>
             ))}
           </View> 
         </View>
 
-        <Text style={tw`text-gray-600 p-4`}>Message</Text>
+        <Text style={tw`p-4 text-gray-600`}>Message</Text>
         <TextInput
-          style={tw`border border-gray-300 rounded-md h-24 p-4 ml-4 mr-4`}
+          style={tw`h-24 p-4 ml-4 mr-4 border border-gray-300 rounded-md`}
           multiline
           placeholder="Write your comments here..."
           textAlignVertical="top"
@@ -146,11 +146,11 @@ const Book_a_pickup = () => {
         />
 
         <TouchableOpacity 
-          style={tw`bg-black rounded-md py-3 mt-10 p-4 px-5 ml-4 mr-4`} 
+          style={tw`p-4 px-5 py-3 mt-10 ml-4 mr-4 bg-black rounded-md`} 
           onPress={handleSchedulePickUp} 
           disabled={isLoading}
         >
-          <Text style={tw`text-white text-center font-semibold`}>Submit</Text>
+          <Text style={tw`font-semibold text-center text-white`}>Submit</Text>
         </TouchableOpacity>
 
         <View style={tw`mb-10`} />

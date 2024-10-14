@@ -42,7 +42,7 @@ const OTPVerificationScreen = () => {
       try {
         // Simulating API call
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        const response = await axios.post(`http://192.168.8.174:5000/api/passenger/login`, {
+        const response = await axios.post(`http://192.168.43.196:5000/api/passenger/login`, {
           contact
         });
 
@@ -52,10 +52,19 @@ const OTPVerificationScreen = () => {
           // Store user details in AsyncStorage
           await AsyncStorage.setItem('passengerDetails', JSON.stringify(passengerDetails));
 
+          if (passengerDetails.role === "Driver") {
+            router.push({
+              pathname: "/(root)/GarbageMap",
+            });
+          }
+          else {
+            router.push({
+              pathname: "/(tabs)/home",
+            });
+          }
+
           // Navigate to HomeScreen
-          router.push({
-            pathname: "/(tabs)/home",
-          });
+          
         } else {
           Alert.alert("Login Failed", "Contact number is incorrect");
         }
