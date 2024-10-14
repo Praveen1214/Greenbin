@@ -41,7 +41,11 @@ const SignUp = () => {
       return;
     }
     try {
+<<<<<<< HEAD
       const response = await axios.post(`http://192.168.8.154:5000/api/passenger/register`, {
+=======
+      const response = await axios.post(`http://192.168.8.174:5000/api/passenger/register`, {
+>>>>>>> main
         firstname: form.firstname,
         lastname: form.lastname,
         email: form.email,
@@ -53,7 +57,11 @@ const SignUp = () => {
         
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
+<<<<<<< HEAD
         const response = await axios.post(`http://192.168.8.154:5000/api/passenger/login`, {
+=======
+        const response = await axios.post(`http://192.168.8.174:5000/api/passenger/login`, {
+>>>>>>> main
           contact
         });
 

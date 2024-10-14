@@ -42,7 +42,11 @@ const OTPVerificationScreen = () => {
       try {
         // Simulating API call
         await new Promise((resolve) => setTimeout(resolve, 2000));
+<<<<<<< HEAD
         const response = await axios.post(`http://192.168.8.154:5000/api/passenger/login`, {
+=======
+        const response = await axios.post(`http://192.168.8.174:5000/api/passenger/login`, {
+>>>>>>> main
           contact
         });
 
