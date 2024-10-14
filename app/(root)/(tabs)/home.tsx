@@ -142,6 +142,7 @@ const HomeScreen = () => {
             { icon: "refresh-cw", text: "Recycle", navigateTo: "Resycle" },
             { icon: "book-open", text: "Learn", navigateTo: "AllrequestItems" },
             { icon: "file-text", text: "News" }
+
           ].map((item, index) => (
             <TouchableOpacity
               key={index}

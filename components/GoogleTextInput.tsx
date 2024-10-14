@@ -3,7 +3,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 
 import { GoogleInputProps } from "@/types/type";
 
-const googlePlacesApiKey = process.env.EXPO_PUBLIC_PLACES_API_KEY;
+const googlePlacesApiKey = "AIzaSyDa1olgsfiH0ktBXGGkG2P_PXy1f5bIUdE";
 
 const GoogleTextInput = ({
   initialLocation,
@@ -64,7 +64,7 @@ const GoogleTextInput = ({
         }}
         textInputProps={{
           placeholderTextColor: "gray",
-          placeholder: initialLocation ?? "Where do you want to go?",
+          placeholder: initialLocation ?? "Where is your garbage bag ?",
         }}
       />
     </View>
