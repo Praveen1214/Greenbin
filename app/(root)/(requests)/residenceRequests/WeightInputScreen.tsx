@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
 import axios from 'axios';
 import { useRoute, useNavigation } from '@react-navigation/native';
+
+const COST_PER_KG = 250; // LKR 250 per kg
 
 export default function WeightInput() {
   const route = useRoute();
   const navigation = useNavigation();
   const [request, setRequest] = useState(null);
   const [weights, setWeights] = useState({});
-  const [response, setResponse] = useState(null); // To hold the pickup data from the API
+  const [response, setResponse] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     if (route.params && route.params.request) {
       const requestId = route.params.request._id;
-      setRequest(requestId);
+      setRequest(route.params.request);
 
-      // Fetch the pickup request data using request ID
       axios
         .get(`http://192.168.8.154:5000/api/pickupgarbage/getbyuserid/${requestId}`)
         .then((res) => {
           if (res.data && res.data.length > 0) {
-            setResponse(res.data[0]); // Assume the first item is the one we need
+            setResponse(res.data[0]);
           } else {
             Alert.alert('Error', 'No pickup data found for this request.');
             navigation.goBack();
@@ -38,10 +40,18 @@ export default function WeightInput() {
   }, [route.params]);
 
   const handleWeightChange = (garbageType, value) => {
-    setWeights({ ...weights, [garbageType]: parseFloat(value) || 0 });
+    const newWeights = { ...weights, [garbageType]: parseFloat(value) || 0 };
+    setWeights(newWeights);
+    calculateTotalAmount(newWeights);
   };
 
-  const handleCalculate = async () => {
+  const calculateTotalAmount = (currentWeights) => {
+    const totalWeight = Object.values(currentWeights).reduce((sum, weight) => sum + weight, 0);
+    const total = totalWeight * COST_PER_KG;
+    setTotalAmount(total);
+  };
+
+  const handleSubmit = async () => {
     if (!request || !request._id) {
       Alert.alert('Error', 'No request data available.');
       return;
@@ -49,24 +59,21 @@ export default function WeightInput() {
 
     try {
       const response = await axios.post("http://192.168.8.187:5000/api/pickupgarbage/updateweights", {
-        userId: request._id, // Use the _id field from the request object
+        bookingId: request._id,
         weights: weights,
       });
 
       console.log('Cost calculation response:', response.data);
 
       if (response.data && response.data.totalCost) {
-        Alert.alert(
-          'Cost Calculated',
-          `Total cost: LKR ${response.data.totalCost.toFixed(2)}`,
-          [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-        );
+        Alert.alert('Success', `Total cost submitted: LKR ${response.data.totalCost.toFixed(2)}`);
+        navigation.navigate('Home');
       } else {
-        Alert.alert('Error', 'Failed to calculate cost. Please try again.');
+        Alert.alert('Error', 'Failed to submit weights. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', `Failed to update weights and calculate cost: ${error.message}`);
+      Alert.alert('Error', `Failed to update weights: ${error.message}`);
     }
   };
 
@@ -75,7 +82,7 @@ export default function WeightInput() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Pickup Request Details</Text>
       <Text>User ID: {response.userid}</Text>
       <Text>Date: {response.date}</Text>
@@ -99,8 +106,12 @@ export default function WeightInput() {
         <Text>No garbage types available.</Text>
       )}
 
-      <Button title="Calculate Cost" onPress={handleCalculate} />
-    </View>
+      <View style={styles.resultContainer}>
+        <Text style={styles.resultText}>Total Amount: LKR {totalAmount.toFixed(2)}</Text>
+      </View>
+
+      <Button title="Submit Weights" onPress={handleSubmit} />
+    </ScrollView>
   );
 }
 
@@ -131,5 +142,16 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 5,
     width: 100,
+  },
+  resultContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
