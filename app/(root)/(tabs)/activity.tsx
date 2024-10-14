@@ -49,8 +49,14 @@ const RequestsList = () => {
   );
 
   return (
-    <View style={tw`flex-1 p-4 bg-gray-100`}>
-      <Text style={tw`mb-4 text-2xl font-bold`}>Requests</Text>
+    <View style={tw`flex-1 bg-gray-100`}>
+      <View style={tw`bg-[#4CAF50] p-10 flex-row items-center mb-5`}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={tw`ml-4 text-2xl font-bold text-white`}>Requests</Text>
+      </View>
+
       <FlatList
         data={requests}
         renderItem={renderItem}
@@ -66,7 +72,9 @@ const RequestsList = () => {
           setIsEditing(false);
         }}
       >
-        <View style={tw`items-center justify-center flex-1 bg-black bg-opacity-50`}>
+        <View
+          style={tw`items-center justify-center flex-1 bg-black bg-opacity-50`}
+        >
           <View style={tw`w-11/12 overflow-hidden bg-white rounded-lg h-5/6`}>
             {selectedRequest && !isEditing && (
               <RequestDetails

@@ -42,7 +42,7 @@ const SignUp = () => {
     }
     try {
       const response = await axios.post(
-        `http://192.168.8.174:5000/api/passenger/register`,
+        `http://192.168.43.196:5000/api/passenger/register`,
         {
           firstname: form.firstname,
           lastname: form.lastname,

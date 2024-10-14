@@ -36,16 +36,16 @@ const Resycle = () => {
     }
   ];
 
-const handleNavigate = (category) => {
-  router.push({
-    pathname: "/Requestitem",
-    params: { category: category.name }
-  });
-};
+  const handleNavigate = (category) => {
+    router.push({
+      pathname: "/Requestitem",
+      params: { category: category.name }
+    });
+  };
 
   return (
     <TailwindProvider>
-      <View style={{ backgroundColor: "#0C6C41", padding: 16, marginTop: 24 }}>
+      <View style={{ backgroundColor: "#4CAF50", padding: 16, marginTop: 24 }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => router.back()}>
             <AntDesign name="arrowleft" size={24} color="white" />
