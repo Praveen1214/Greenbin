@@ -74,6 +74,47 @@ router.route('/getallrequestitems/:contact').get(async (req, res) => {
     }
 });
 
+router.route('/updaterequest/:id').put(async (req, res) => {
+
+    const reqID = req.params.id;
+
+    const {
+        category,
+        quantity,
+        factoryName,
+        factoryAddress,
+        beneficiaryName,
+        bank,
+        accountNo,
+        totalSellPrice,
+        contact
+    } = req.body;
+
+    const editreq = {
+        category,
+        quantity,
+        factoryName,
+        factoryAddress,
+        beneficiaryName,
+        bank,
+        accountNo,
+        totalSellPrice,
+        contact
+    }
+
+    try {
+
+        await RequestItem.findByIdAndUpdate(reqID, editreq);
+        return res.status(200).json({ status: "req updated" });
+
+    } catch (error) {
+
+        return res.status(500).json({ status: "Error with update req", message: error });
+
+    }
+});
+
+
 
 
 

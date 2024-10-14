@@ -301,6 +301,7 @@ const RequestItem = () => {
                 onChangeText={setAccountNo}
                 placeholder="Enter account number"
                 style={tw`p-3 border border-gray-300 rounded-md`}
+                keyboardType="numeric"
               />
             </View>
           )}
