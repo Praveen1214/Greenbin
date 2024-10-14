@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from 'expo-router';
-
+import { useRouter } from "expo-router";
+import QRCode from 'react-native-qrcode-svg';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const ProfileItem = ({ icon, label, value }) => (
   <View className="flex-row items-center py-3 border-b border-gray-200">
@@ -23,25 +25,12 @@ const ProfileItem = ({ icon, label, value }) => (
   </View>
 );
 
-const EmergencyContact = ({ icon, label, value }) => (
-  <TouchableOpacity className="flex-1 p-4 mx-2 bg-white shadow-md rounded-xl">
-    <View className="items-center mb-2">
-      <View className="p-3 bg-red-100 rounded-full">
-        <Ionicons name={icon} size={24} color="#DC2626" />
-      </View>
-    </View>
-    <Text className="mb-1 text-sm font-bold text-center">{label}</Text>
-    <Text className="text-xs text-center text-gray-600">{value}</Text>
-  </TouchableOpacity>
-);
-
 const Profile = () => {
-
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [gender, setGender] = useState("");
-
+  const [userId, setUserId] = useState(null); // Initialize as null
   const router = useRouter();
 
   useEffect(() => {
@@ -56,7 +45,8 @@ const Profile = () => {
           );
           setEmail(passengerDetails.email);
           setContact(passengerDetails.contact);
-          setGender(passengerDetails.gender)
+          setGender(passengerDetails.gender);
+          setUserId(passengerDetails._id); // Storing user ID (_id) from MongoDB
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -66,15 +56,39 @@ const Profile = () => {
     getPassengerDetails();
   }, []);
 
-  // Simulated user data (to be replaced with MongoDB data in the future)
-  const userData = {
-    fullName: userName,
-    email: email,
-    mobileNumber: contact,
-    gender: gender,
+  const downloadQRCode = async () => {
+    if (!userId) {
+      alert("Error: Unable to fetch user ID for QR Code");
+      return;
+    }
+    
+    try {
+      // Use the cache directory to save the QR code as an image file
+      const filePath = `${FileSystem.cacheDirectory}qr-code.png`;
+      
+      const qrRef = qrCodeRef.current;
+      if (qrRef) {
+        // Get the QR code data in Base64 format
+        qrRef.toDataURL(async (data) => {
+          // Append the proper prefix for Base64 image
+          const base64Data = `data:image/png;base64,${data}`;
+          
+          // Write the file to the filesystem
+          await FileSystem.writeAsStringAsync(filePath, data, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          // Share the QR code image
+          await Sharing.shareAsync(filePath);
+        });
+      }
+    } catch (error) {
+      console.error("Error downloading QR code:", error);
+    }
   };
 
-  
+  const qrCodeRef = React.useRef(null); // Reference to the QR code
+
   const platformSpecificStyle = Platform.select({
     ios: "mb-4",
     android: "mb-2",
@@ -89,7 +103,6 @@ const Profile = () => {
     }
   };
 
-  
   return (
     <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
       <ScrollView className="bg-white">
@@ -99,43 +112,43 @@ const Profile = () => {
 
         <View className="p-6">
           <Text className="mb-3 text-lg font-bold">Your Info</Text>
-          <ProfileItem
-            icon="person-outline"
-            label="Full Name"
-            value={userData.fullName}
-          />
-          <ProfileItem
-            icon="mail-outline"
-            label="Email Address"
-            value={userData.email}
-          />
-          <ProfileItem
-            icon="phone-portrait-outline"
-            label="Mobile Number"
-            value={userData.mobileNumber}
-          />
-          <ProfileItem
-            icon="calendar-outline"
-            label="Birthday"
-            value="Add Birthday"
-          />
-          <ProfileItem
-            icon="male-female-outline"
-            label="Gender"
-            value={userData.gender}
-          />
-        </View>
+          <ProfileItem icon="person-outline" label="Full Name" value={userName} />
+          <ProfileItem icon="mail-outline" label="Email Address" value={email} />
+          <ProfileItem icon="phone-portrait-outline" label="Mobile Number" value={contact} />
+          <ProfileItem icon="male-female-outline" label="Gender" value={gender} />
 
-        <View className="p-6 ">
-          <Text className="mb-4 text-lg font-bold">Emergency Contacts</Text>
-          <View className={`flex-row ${platformSpecificStyle}`}>
-            <EmergencyContact
-              icon="shield-checkmark"
-              label="Police"
-              value="119"
-            />
-            <EmergencyContact icon="medical" label="Ambulance" value="1990" />
-          </View>
+          {/* Conditionally render QR Code */}
+          {userId ? (
+            <View style={{ alignItems: 'center', marginTop: 20 }}>
+              <Text className="text-lg font-bold">Your QR Code</Text>
+              <QRCode
+                value={userId} // Storing only the _id (userId) in the QR code
+                size={200}
+                getRef={qrCodeRef} // Ref to download the QR code
+              />
+            </View>
+          ) : (
+            <Text style={{ textAlign: 'center', marginTop: 20 }}>
+              Loading QR Code...
+            </Text>
+          )}
+
+          {/* Download QR Code Button */}
+          {userId && (
+            <TouchableOpacity
+              onPress={downloadQRCode}
+              style={{
+                backgroundColor: '#0C6C41',
+                padding: 10,
+                borderRadius: 5,
+                marginTop: 20,
+              }}
+            >
+              <Text style={{ color: '#fff', textAlign: 'center' }}>
+                Download QR Code
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity className="bg-white border border-[#0C6C41] mx-6 my-2 p-3 rounded-lg" onPress={handleLogout}>

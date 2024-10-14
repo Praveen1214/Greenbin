@@ -65,5 +65,22 @@ router.route('/login').post(async (req, res) => {
     }
 });
 
+// Fetch user profile for QR code
+router.get('/getProfile/:userId', async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const userProfile = await Passengers.findById(userId);
+        if (!userProfile) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Return the user profile
+        return res.status(200).json(userProfile);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching user profile', error: error.message });
+    }
+});
+
+
+
 
 module.exports = router;
