@@ -40,6 +40,7 @@ router.get("/getallpickupgarbage", async (req, res) => {
 });
 
 
+
 router.route('/cancelshedule/:id').put(async (req, res) => {
     const reqID = req.params.id;
 
@@ -80,6 +81,48 @@ router.delete('/deletshedule/:id', async (req, res) => {
 
 
 
+
+
+
+router.get("getbyuserid/:userid", async (req, res) => {
+    try {
+        const pickup = await PickupGarbage.find({ userid: req.params.userid });
+        return res.json(pickup);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
+
+router.route('/updateweights').post(async (req, res) => {
+    const { bookingId, weights } = req.body;
+    const costPerKg = 250; // LKR 250 per kg
+
+    try {
+        // Find the booking by its ID
+        const pickup = await PickupGarbage.findById(bookingId);
+        if (!pickup) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        // Update the weights and calculate the total cost
+        pickup.weights = weights;
+
+        // Calculate total cost based on the weight of each type of garbage
+        const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+        const totalCost = totalWeight * costPerKg;
+        pickup.totalCost = totalCost;
+
+        await pickup.save();
+
+        return res.status(200).json({ 
+            message: 'Weights updated and cost calculated successfully', 
+            totalCost: totalCost 
+        });
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating weights', error: error.message });
+    }
+});
 
 
 module.exports = router;

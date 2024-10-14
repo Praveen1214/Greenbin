@@ -1,16 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-} from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from 'expo-router';
-
+import { useRouter } from "expo-router";
+import QRCode from "react-native-qrcode-svg";
+import ViewShot from "react-native-view-shot";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const ProfileItem = ({ icon, label, value }) => (
   <View className="flex-row items-center py-3 border-b border-gray-200">
@@ -23,40 +20,33 @@ const ProfileItem = ({ icon, label, value }) => (
   </View>
 );
 
-const EmergencyContact = ({ icon, label, value }) => (
-  <TouchableOpacity className="flex-1 p-4 mx-2 bg-white shadow-md rounded-xl">
-    <View className="items-center mb-2">
-      <View className="p-3 bg-red-100 rounded-full">
-        <Ionicons name={icon} size={24} color="#DC2626" />
-      </View>
-    </View>
-    <Text className="mb-1 text-sm font-bold text-center">{label}</Text>
-    <Text className="text-xs text-center text-gray-600">{value}</Text>
-  </TouchableOpacity>
-);
-
 const Profile = () => {
-
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
-  const [gender, setGender] = useState("");
+  const [userData, setUserData] = useState({
+    _id: "",
+    fullName: "",
+    email: "",
+    contact: "",
+    gender: "",
+    address: ""
+  });
 
   const router = useRouter();
+  const qrRef = useRef();
 
   useEffect(() => {
     const getPassengerDetails = async () => {
       try {
-        const passengerDetailsString =
-          await AsyncStorage.getItem("passengerDetails");
+        const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
-          setUserName(
-            passengerDetails.firstname + " " + passengerDetails.lastname
-          );
-          setEmail(passengerDetails.email);
-          setContact(passengerDetails.contact);
-          setGender(passengerDetails.gender)
+          setUserData({
+            _id: passengerDetails._id || "",
+            fullName: `${passengerDetails.firstname} ${passengerDetails.lastname}`,
+            email: passengerDetails.email,
+            contact: passengerDetails.contact,
+            gender: passengerDetails.gender,
+            address: passengerDetails.address || ""
+          });
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -66,83 +56,88 @@ const Profile = () => {
     getPassengerDetails();
   }, []);
 
-  // Simulated user data (to be replaced with MongoDB data in the future)
-  const userData = {
-    fullName: userName,
-    email: email,
-    mobileNumber: contact,
-    gender: gender,
-  };
-
-  
-  const platformSpecificStyle = Platform.select({
-    ios: "mb-4",
-    android: "mb-2",
-  });
-
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('passengerDetails');
+      await AsyncStorage.removeItem("passengerDetails");
       router.replace("/(auth)/sign-in");
     } catch (error) {
+      Alert.alert("Error", "Failed to log out. Please try again.");
       console.error("Error logging out:", error);
     }
   };
 
-  
+  // Generate QR code data
+  const qrCodeData = JSON.stringify({
+    _id: userData._id,
+    fullName: userData.fullName,
+    email: userData.email,
+    contact: userData.contact,
+    address: userData.address
+  });
+
+  const downloadQRCode = async () => {
+    try {
+      const uri = await qrRef.current.capture();
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const filename = `${FileSystem.documentDirectory}MyQRCode_${Date.now()}.png`;
+      await FileSystem.writeAsStringAsync(filename, base64, { encoding: FileSystem.EncodingType.Base64 });
+      
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(filename);
+      } else {
+        Alert.alert("Saved", `QR Code saved to ${filename}`);
+      }
+    } catch (error) {
+      console.error("Error saving QR code:", error);
+      Alert.alert("Error", "Failed to save QR code. Please try again.");
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
+      <View className="bg-[#0C6C41] p-4 flex-row justify-between items-center">
+        <Text className="text-2xl font-bold text-white">Profile</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView className="bg-white">
-        <View className="bg-[#0C6C41] p-4">
-          <Text className="text-2xl font-bold text-white">Profile</Text>
+        <View className="p-6">
+          <Text className="mb-3 text-lg font-bold">Your Info</Text>
+          <ProfileItem icon="person-outline" label="Full Name" value={userData.fullName} />
+          <ProfileItem icon="mail-outline" label="Email Address" value={userData.email} />
+          <ProfileItem icon="phone-portrait-outline" label="Mobile Number" value={userData.contact} />
+          <ProfileItem icon="male-female-outline" label="Gender" value={userData.gender} />
+          <ProfileItem icon="home-outline" label="Address" value={userData.address || "Add Address"} />
         </View>
 
         <View className="p-6">
-          <Text className="mb-3 text-lg font-bold">Your Info</Text>
-          <ProfileItem
-            icon="person-outline"
-            label="Full Name"
-            value={userData.fullName}
-          />
-          <ProfileItem
-            icon="mail-outline"
-            label="Email Address"
-            value={userData.email}
-          />
-          <ProfileItem
-            icon="phone-portrait-outline"
-            label="Mobile Number"
-            value={userData.mobileNumber}
-          />
-          <ProfileItem
-            icon="calendar-outline"
-            label="Birthday"
-            value="Add Birthday"
-          />
-          <ProfileItem
-            icon="male-female-outline"
-            label="Gender"
-            value={userData.gender}
-          />
-        </View>
-
-        <View className="p-6 ">
-          <Text className="mb-4 text-lg font-bold">Emergency Contacts</Text>
-          <View className={`flex-row ${platformSpecificStyle}`}>
-            <EmergencyContact
-              icon="shield-checkmark"
-              label="Police"
-              value="119"
-            />
-            <EmergencyContact icon="medical" label="Ambulance" value="1990" />
+          <Text className="mb-3 text-lg font-bold">Your QR Code</Text>
+          <View className="items-center justify-center">
+            {userData._id ? (
+              <ViewShot ref={qrRef} options={{ format: "png", quality: 0.9 }}>
+                <QRCode
+                  value={qrCodeData}
+                  size={200}
+                  color="#000"
+                  backgroundColor="#FFF"
+                />
+              </ViewShot>
+            ) : (
+              <Text className="text-sm text-red-600">QR code cannot be generated: Missing user data</Text>
+            )}
+            <Text className="mt-2 text-sm text-gray-600">
+              Scan this QR code to get user details for garbage collection
+            </Text>
+            <TouchableOpacity 
+              onPress={downloadQRCode}
+              className="mt-4 mb-6 bg-[#0C6C41] py-2 px-4 rounded-full"
+            >
+              <Text className="text-white font-semibold">Download QR Code</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-6 my-2 p-3 rounded-lg" onPress={handleLogout}>
-          <Text className="text-[#0C6C41] font-bold text-center text-base">
-            Log Out
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

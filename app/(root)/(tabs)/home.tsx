@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
@@ -139,9 +140,9 @@ const HomeScreen = () => {
               text: "Book a Pickup",
               navigateTo: "Book_a_pickup"
             }, // Added navigateTo property
-            { icon: "refresh-cw", text: "Recycle", navigateTo: "Resycle" },
-            { icon: "book-open", text: "Learn" },
-            { icon: "file-text", text: "News" }
+          { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
+            { icon: "book-open", text: "Learn" , navigateTo: "Scan"},
+            { icon: "file-text", text: "News" ,navigateTo:"QRCodeGenerator"}
 
           ].map((item, index) => (
             <TouchableOpacity
@@ -256,11 +257,7 @@ const HomeScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("GarbageMap")}>
-          <View className="ml-10">
-            <Text>Driver</Text>
-          </View>
-        </TouchableOpacity>
+  
       </ScrollView>
     </SafeAreaView>
   );
