@@ -139,7 +139,7 @@ const HomeScreen = () => {
               text: "Book a Pickup",
               navigateTo: "Book_a_pickup"
             }, // Added navigateTo property
-            { icon: "refresh-cw", text: "Recycle", navigateTo: "Resycle" },
+          { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
             { icon: "book-open", text: "Learn" },
             { icon: "file-text", text: "News" }
 
