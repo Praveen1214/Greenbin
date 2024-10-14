@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import LOGOIMG from "assets/images/home.png";
 
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
@@ -145,10 +146,13 @@ const HomeScreen = () => {
               icon: "truck",
               text: "Book a Pickup",
               navigateTo: "Book_a_pickup"
-            },
-            { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
-            { icon: "book-open", text: "Learn" },
-            { icon: "file-text", text: "News" }
+
+            }, // Added navigateTo property
+          { icon: "refresh-cw", text: "Recycle", navigateTo: "Recycle" },
+            { icon: "book-open", text: "Learn" , navigateTo: "Scan"},
+            { icon: "file-text", text: "News" ,navigateTo:"QRCodeGenerator"}
+
+
           ].map((item, index) => (
             <TouchableOpacity
               key={index}
