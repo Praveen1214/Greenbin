@@ -8,6 +8,8 @@ import axios from 'axios';
 import GoogleTextInput from "@/components/GoogleTextInput";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import 'react-native-get-random-values'; // Polyfill for crypto.getRandomValues
+import { v4 as uuidv4 } from 'uuid'; // Import UUID
 
 const Book_a_pickup = () => {
   const navigation = useNavigation();
@@ -48,8 +50,6 @@ const Book_a_pickup = () => {
     setLocation(location);
   };
 
-  
-
   const handleSchedulePickUp = async () => {
     if (!location.address) {
       Alert.alert("Error", "Please select a pickup location.");
@@ -68,6 +68,7 @@ const Book_a_pickup = () => {
         garbagetypes: selectedTypes,
         message,
         datetime: date.toISOString(),
+        pickupId: uuidv4(), // Generate unique ID for the pickup request
       });
 
       Alert.alert("Success", "Pickup booked successfully!", [
@@ -104,12 +105,8 @@ const Book_a_pickup = () => {
               style={{ width: 100, height: 100 }}
             />
             <View style={tw`flex-col items-end`}>
-              <Text style={tw`text-lg font-semibold text-gray-800`}>
-                Purchase price
-              </Text>
-              <Text style={tw`text-xl font-bold text-green-600`}>
-                1Kg = LKR 250.00
-              </Text>
+              <Text style={tw`text-lg font-semibold text-gray-800`}>Purchase price</Text>
+              <Text style={tw`text-xl font-bold text-green-600`}>1Kg = LKR 250.00</Text>
             </View>
           </View>
         </View>
@@ -144,8 +141,6 @@ const Book_a_pickup = () => {
             ))}
           </View> 
         </View>
-
-        
 
         <View style={tw`p-4`}>
           <Text style={tw`text-gray-600 font-semibold mb-2`}>Additional Notes</Text>
