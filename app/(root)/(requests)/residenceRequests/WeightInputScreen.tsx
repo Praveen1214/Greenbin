@@ -12,6 +12,7 @@ export default function WeightInput() {
   const [weights, setWeights] = useState({});
   const [response, setResponse] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [status, setStatus] = useState('Pending');
 
   useEffect(() => {
     if (route.params && route.params.request) {
@@ -23,6 +24,7 @@ export default function WeightInput() {
         .then((res) => {
           if (res.data && res.data.length > 0) {
             setResponse(res.data[0]);
+            setStatus(res.data[0].status);
           } else {
             Alert.alert('Error', 'No pickup data found for this request.');
             navigation.goBack();
@@ -52,28 +54,20 @@ export default function WeightInput() {
   };
 
   const handleSubmit = async () => {
-    if (!request || !request._id) {
-      Alert.alert('Error', 'No request data available.');
-      return;
-    }
-
+    
     try {
-      const response = await axios.post("http://192.168.8.187:5000/api/pickupgarbage/updateweights", {
-        bookingId: request._id,
-        weights: weights,
-      });
-
-      console.log('Cost calculation response:', response.data);
-
-      if (response.data && response.data.totalCost) {
-        Alert.alert('Success', `Total cost submitted: LKR ${response.data.totalCost.toFixed(2)}`);
-        navigation.navigate('Home');
+      // Update status to "Completed"
+      const response = await axios.put(`http://192.168.8.154:5000/api/pickupgarbage/updatestatus/${request._id}`);
+      
+      if (response.data.status === "Pending") {
+        Alert.alert('Success', 'Status updated to Completed successfully');
+        setStatus("Completed");
       } else {
-        Alert.alert('Error', 'Failed to submit weights. Please try again.');
+        Alert.alert('Error', 'Failed to update status');
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', `Failed to update weights: ${error.message}`);
+      Alert.alert('Error', `Failed to update status: ${error.message}`);
     }
   };
 
@@ -86,7 +80,7 @@ export default function WeightInput() {
       <Text style={styles.title}>Pickup Request Details</Text>
       <Text>User ID: {response.userid}</Text>
       <Text>Date: {response.date}</Text>
-      <Text>Status: {response.status}</Text>
+      <Text style={styles.status}>Status: {status}</Text>
 
       <Text style={styles.subtitle}>Enter Garbage Weights (kg)</Text>
 
@@ -153,5 +147,11 @@ const styles = StyleSheet.create({
   resultText: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  status: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'green',
+    marginTop: 5,
   },
 });
