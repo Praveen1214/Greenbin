@@ -160,7 +160,7 @@ const GarbageMap = () => {
         </Text>
         
         <TouchableOpacity onPress={handlePickupPress}>
-          <Text className='bg-green-600 p-2 rounded-lg text-sm text-white'>
+          <Text className='p-2 text-sm text-white bg-green-600 rounded-lg'>
             {showDirections ? "Hide Directions" : "Show Directions"}
           </Text>
         </TouchableOpacity>
