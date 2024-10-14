@@ -15,6 +15,7 @@ router.post('/request-item', async (req, res) => {
             bank,
             accountNo,
             totalSellPrice,
+            contact
         } = req.body;
 
         const newRequestItem = new RequestItem({
@@ -26,6 +27,7 @@ router.post('/request-item', async (req, res) => {
             bank,
             accountNo,
             totalSellPrice,
+            contact
         });
 
         const savedItem = await newRequestItem.save();

@@ -44,6 +44,10 @@ const requestItemSchema = new mongoose.Schema({
         default: "Pending",
         enum : ["Pending", "Approved", "Rejected", "Canceled"]
     },
+    contact: {
+        type: String,
+        required: true,
+    }
 });
 
 const RequestItem = mongoose.model('requestitems', requestItemSchema);

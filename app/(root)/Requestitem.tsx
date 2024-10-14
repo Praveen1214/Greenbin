@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import tw from "twrnc";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 const RequestItem = () => {
   const [quantity, setQuantity] = useState(5);
@@ -28,6 +30,35 @@ const RequestItem = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { category } = route.params;
+
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [gender, setGender] = useState("");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
+          setEmail(passengerDetails.email);
+          setContact(passengerDetails.contact);
+          setGender(passengerDetails.gender);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, [contact]);
 
   const pricePerKg = 250;
   const totalSellPrice = quantity * pricePerKg;
@@ -87,7 +118,8 @@ const RequestItem = () => {
             beneficiaryName,
             bank,
             accountNo,
-            totalSellPrice
+            totalSellPrice,
+            contact
           }
         );
 
