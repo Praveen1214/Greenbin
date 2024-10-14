@@ -28,18 +28,24 @@ connection.on("connected", () => {
   console.log("MongoDB Connection Successful");
 });
 
-// Start the server
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
 
 // Import routes
 const PassengerRoute = require('./routes/PassengerRoute');
 const pickUpGarbage = require("./routes/pickupGarbageRoute")
 const RequestItemRoute = require("./routes/RequestItemRoute")
+const managerRoute = require("./routes/Emp_route")
+
 
 // Use routes
 app.use('/api/passenger', PassengerRoute);
 app.use('/api/pickupgarbage', pickUpGarbage);
 app.use('/api/requestitem', RequestItemRoute);
+app.use('/api/managers', managerRoute);
+
+
+
+// Start the server
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
