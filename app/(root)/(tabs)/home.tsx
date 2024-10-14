@@ -43,8 +43,8 @@ const HomeScreen = () => {
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', padding: 16 }}>
           {[
             { icon: 'truck', text: 'Book a Pickup', navigateTo: 'Book_a_pickup' }, // Added navigateTo property
-            { icon: 'refresh-cw', text: 'Recycle', navigateTo :'Resycle' },
-            { icon: 'book-open', text: 'Learn'},
+            { icon: 'refresh-cw', text: 'Recycle', navigateTo :'Recycle' },
+            { icon: 'book-open', text: 'Learn', navigateTo :'AllrequestItems' },
             { icon: 'file-text', text: 'News' },
           ].map((item, index) => (
             <TouchableOpacity
@@ -71,6 +71,12 @@ const HomeScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
+
+        <TouchableOpacity onPress={() => navigation.navigate('GarbageMap')}>
+  <View className='ml-10'>
+    <Text>Driver</Text> 
+  </View>
+</TouchableOpacity>
 
         <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold', marginHorizontal: 16, marginBottom: 8 }}>Contact Us</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginBottom: 24 }}>
@@ -111,11 +117,7 @@ const HomeScreen = () => {
             <Text style={{ color: '#4CAF50', fontWeight: 'semibold', marginLeft: 8 }}>Call Now</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('GarbageMap')}>
-  <View className='ml-10'>
-    <Text>Driver</Text> 
-  </View>
-</TouchableOpacity>
+       
 
        
       </ScrollView>

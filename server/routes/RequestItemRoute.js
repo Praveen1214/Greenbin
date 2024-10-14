@@ -12,6 +12,14 @@ router.get('/request-items', async (req, res) => {
     }
   });
 
+  router.get('/request-items', async (req, res) => {
+    try {
+      const requestItems = await RequestItem.find();
+      res.status(200).json(requestItems);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 router.post('/request-item', async (req, res) => {
     try {
