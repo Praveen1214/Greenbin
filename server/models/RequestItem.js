@@ -11,6 +11,10 @@ const requestItemSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    factoryName: {
+        type: String,
+        required: true,
+    },
     factoryAddress: {
         type: String,
         required: true,
@@ -37,8 +41,13 @@ const requestItemSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default:"Pending",
+        default: "Pending",
+        enum : ["Pending", "Approved", "Rejected", "Canceled"]
     },
+    contact: {
+        type: String,
+        required: true,
+    }
 });
 
 const RequestItem = mongoose.model('requestitems', requestItemSchema);
