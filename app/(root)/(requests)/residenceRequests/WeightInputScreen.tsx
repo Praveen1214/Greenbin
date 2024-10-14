@@ -1,108 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { View, Text, TextInput, ScrollView, Button, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useWeights } from '../../hooks/useWeights';
+import { usePickupData } from '../../hooks/usePickupData';
+import { submitWeights } from '../../services/PickupService';
 
 export default function WeightInput() {
   const route = useRoute();
   const navigation = useNavigation();
-  const [request, setRequest] = useState(null);
-  const [weights, setWeights] = useState({});
-  const [response, setResponse] = useState(null); // To hold the pickup data from the API
+  const { request } = route.params || {};
+  const { weights, totalAmount, handleWeightChange } = useWeights();
+  const { pickupData } = usePickupData(request?._id);
 
   useEffect(() => {
-    if (route.params && route.params.request) {
-      const requestId = route.params.request._id;
-      setRequest(requestId);
-
-      // Fetch the pickup request data using request ID
-      axios
-        .get(`http://192.168.8.187:5000/api/pickupgarbage/getbyuserid/${requestId}`)
-        .then((res) => {
-          if (res.data && res.data.length > 0) {
-            setResponse(res.data[0]); // Assume the first item is the one we need
-          } else {
-            Alert.alert('Error', 'No pickup data found for this request.');
-            navigation.goBack();
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching pickup data:', error);
-          Alert.alert('Error', 'Failed to fetch request data.');
-          navigation.goBack();
-        });
-    } else {
+    if (!request) {
       Alert.alert('Error', 'No request data available.');
       navigation.goBack();
     }
-  }, [route.params]);
+  }, [request, navigation]);
 
-  const handleWeightChange = (garbageType, value) => {
-    setWeights({ ...weights, [garbageType]: parseFloat(value) || 0 });
-  };
-
-  const handleCalculate = async () => {
-    if (!request || !request._id) {
+  const handleSubmit = async () => {
+    if (!request?._id) {
       Alert.alert('Error', 'No request data available.');
       return;
     }
 
     try {
-      const response = await axios.post("http://192.168.8.187:5000/api/pickupgarbage/updateweights", {
-        userId: request._id, // Use the _id field from the request object
-        weights: weights,
-      });
-
-      console.log('Cost calculation response:', response.data);
-
-      if (response.data && response.data.totalCost) {
-        Alert.alert(
-          'Cost Calculated',
-          `Total cost: LKR ${response.data.totalCost.toFixed(2)}`,
-          [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
-        );
+      const response = await submitWeights(request._id, weights);
+      if (response?.totalCost) {
+        Alert.alert('Success', `Total cost submitted: LKR ${response.totalCost.toFixed(2)}`);
+        navigation.navigate('Home');
       } else {
-        Alert.alert('Error', 'Failed to calculate cost. Please try again.');
+        Alert.alert('Error', 'Failed to submit weights. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', `Failed to update weights and calculate cost: ${error.message}`);
+      Alert.alert('Error', error.message);
     }
   };
 
-  if (!response) {
+  if (!pickupData) {
     return <Text>Loading...</Text>;
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Pickup Request Details</Text>
-      <Text>User ID: {response.userid}</Text>
-      <Text>Date: {response.date}</Text>
-      <Text>Status: {response.status}</Text>
+      <RequestDetails pickupData={pickupData} />
 
       <Text style={styles.subtitle}>Enter Garbage Weights (kg)</Text>
 
-      {response.garbagetypes && Array.isArray(response.garbagetypes) ? (
-        response.garbagetypes.map((type) => (
-          <View key={type} style={styles.inputContainer}>
-            <Text>{type}:</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={(value) => handleWeightChange(type, value)}
-              value={weights[type] ? weights[type].toString() : ''}
-            />
-          </View>
+      {pickupData.garbagetypes && Array.isArray(pickupData.garbagetypes) ? (
+        pickupData.garbagetypes.map((type) => (
+          <GarbageWeightInput key={type} garbageType={type} weight={weights[type]} onChange={handleWeightChange} />
         ))
       ) : (
         <Text>No garbage types available.</Text>
       )}
 
-      <Button title="Calculate Cost" onPress={handleCalculate} />
-    </View>
+      <TotalAmountDisplay totalAmount={totalAmount} />
+
+      <Button title="Submit Weights" onPress={handleSubmit} />
+    </ScrollView>
   );
 }
+
+const RequestDetails = ({ pickupData }) => (
+  <View>
+    <Text>User ID: {pickupData.userid}</Text>
+    <Text>Date: {pickupData.date}</Text>
+    <Text>Status: {pickupData.status}</Text>
+  </View>
+);
+
+const GarbageWeightInput = ({ garbageType, weight, onChange }) => (
+  <View style={styles.inputContainer}>
+    <Text>{garbageType}:</Text>
+    <TextInput
+      style={styles.input}
+      keyboardType="numeric"
+      value={weight ? weight.toString() : ''}
+      onChangeText={(value) => onChange(garbageType, value)}
+    />
+  </View>
+);
+
+const TotalAmountDisplay = ({ totalAmount }) => (
+  <View style={styles.resultContainer}>
+    <Text style={styles.resultText}>Total Amount: LKR {totalAmount.toFixed(2)}</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -131,5 +117,16 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 5,
     width: 100,
+  },
+  resultContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
