@@ -39,6 +39,16 @@ router.get("/getallpickupgarbage", async (req, res) => {
     }
 });
 
+router.get("getbyuserid/:userid", async (req, res) => {
+    try {
+        const pickup = await PickupGarbage.find({ userid: req.params.userid });
+        return res.json(pickup);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
+
 router.route('/updateweights').post(async (req, res) => {
     const { bookingId, weights } = req.body;
     const costPerKg = 250; // LKR 250 per kg

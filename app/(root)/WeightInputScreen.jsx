@@ -1,71 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 
-const WeightInputScreen = ({ route, navigation }) => {
-  const { bookingDetails } = route.params;
+export default function WeightInput({ route, navigation }) {
+  const { request } = route.params;
   const [weights, setWeights] = useState({});
-  const [totalCost, setTotalCost] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleWeightChange = (type, value) => {
-    setWeights({ ...weights, [type]: parseFloat(value) || 0 });
+  const handleWeightChange = (garbageType, value) => {
+    setWeights({ ...weights, [garbageType]: parseFloat(value) || 0 });
   };
 
-  // Calculate total cost based on input weights
-  const calculateCost = () => {
-    const costPerKg = 250; // LKR 250 per kg
-    const total = Object.values(weights).reduce((sum, weight) => sum + weight, 0) * costPerKg;
-    setTotalCost(total);
-  };
-
-  // Save the weights and total cost on the backend when the driver submits the weights
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
+  const handleCalculate = async () => {
     try {
-      // Assuming you have an API endpoint to save the weights and calculate the cost
-      const response = await axios.post('http://192.168.8.174:5000/api/pickupgarbage/updateweights', {
-        bookingId: bookingDetails.id,
-        weights: weights,
-        totalCost: totalCost
+      const response = await axios.post('http://your-api-url/api/pickupgarbage/updateweights', {
+        bookingId: request._id,
+        weights: weights
       });
 
-      Alert.alert('Success', 'Weight and cost saved successfully!', [
-        { text: 'OK', onPress: () => navigation.navigate('Home') }
-      ]);
+      if (response.data && response.data.totalCost) {
+        Alert.alert(
+          'Cost Calculated',
+          `Total cost: LKR ${response.data.totalCost.toFixed(2)}`,
+          [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+        );
+      } else {
+        Alert.alert('Error', 'Failed to calculate cost. Please try again.');
+      }
     } catch (error) {
-      console.error('Error saving weights and cost:', error.response?.data || error.message);
-      Alert.alert('Error', 'Failed to save weights and cost. Please try again later.');
-    } finally {
-      setIsSubmitting(false);
+      console.error('Error:', error);
+      Alert.alert('Error', 'Failed to update weights and calculate cost. Please try again.');
     }
   };
 
-  useEffect(() => {
-    calculateCost(); // Automatically calculate cost when weights change
-  }, [weights]);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter Weights (kg)</Text>
-      {bookingDetails.garbagetypes.map(type => (
+      <Text style={styles.title}>Pickup Request Details</Text>
+      <Text>User ID: {request.userid}</Text>
+      <Text>Address: {request.location.address}</Text>
+      <Text>Date: {request.date}</Text>
+      <Text>Status: {request.status}</Text>
+      
+      <Text style={styles.subtitle}>Enter Garbage Weights (kg)</Text>
+      {request.garbagetypes.map((type) => (
         <View key={type} style={styles.inputContainer}>
-          <Text>{type}</Text>
+          <Text>{type}:</Text>
           <TextInput
             style={styles.input}
             keyboardType="numeric"
             onChangeText={(value) => handleWeightChange(type, value)}
+            value={weights[type] ? weights[type].toString() : ''}
           />
         </View>
       ))}
-      <Button title="Calculate Cost" onPress={calculateCost} />
-      <Text style={styles.totalCost}>Total Cost: LKR {totalCost.toFixed(2)}</Text>
-      <Button title="Submit Weights" onPress={handleSubmit} disabled={isSubmitting} />
+      
+      <Button title="Calculate Cost" onPress={handleCalculate} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -74,24 +65,25 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginBottom: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
   },
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'gray',
-    width: 100,
+    borderColor: '#ccc',
     padding: 5,
-  },
-  totalCost: {
-    fontSize: 18,
-    marginTop: 20,
-    fontWeight: 'bold',
+    width: 100,
   },
 });
-
-export default WeightInputScreen;
