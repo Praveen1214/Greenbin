@@ -44,6 +44,7 @@ router.get('/getallmanagers', async (req, res) => {
   }
 });
 
+
 // READ a specific manager by ID
 router.get('/managersbyid/:id', async (req, res) => {
   try {
