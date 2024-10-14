@@ -3,6 +3,8 @@ import { View, Text, FlatList, TouchableOpacity, Modal, ScrollView, TextInput, A
 import { FontAwesome5, MaterialCommunityIcons, AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import tw from "twrnc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 // Function to get the appropriate icon based on the category
 const getIcon = (category) => {
@@ -144,16 +146,47 @@ const RequestsList = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [gender, setGender] = useState("");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
+          setEmail(passengerDetails.email);
+          setContact(passengerDetails.contact);
+          setGender(passengerDetails.gender);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, [contact]);
+
   useEffect(() => {
     fetchRequests();
   }, []);
 
   const fetchRequests = async () => {
+
     try {
       const response = await axios.get(
-        "http://192.168.43.196:5000/api/requestitem/getallrequestitems"
+        `http://192.168.43.196:5000/api/requestitem/getallrequestitems/${contact}`
       );
-      setRequests(response.data);
+      setRequests(response.data.req);
     } catch (error) {
       console.error("Error fetching requests:", error);
       Alert.alert("Error", "Failed to fetch requests. Please try again later.");
