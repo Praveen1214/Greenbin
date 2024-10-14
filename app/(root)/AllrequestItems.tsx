@@ -77,16 +77,7 @@ const AllrequestItems = () => {
   return (
     <ScrollView>
       {/* Header Section */}
-      <View style={{ backgroundColor: '#0C6C41', padding: 16, marginTop: 24 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign name="arrowleft" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>
-            All Request Items
-          </Text>
-        </View>
-      </View>
+      
 
       {/* Dynamically Render Request Items */}
       {allrequest.length > 0 ? (
