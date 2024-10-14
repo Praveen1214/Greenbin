@@ -174,6 +174,10 @@ const RequestsList = () => {
     };
 
     getPassengerDetails();
+
+    if(contact) {
+      fetchRequests();
+    }
   }, [contact]);
 
   useEffect(() => {
