@@ -33,7 +33,7 @@ export default function QRCodeScanner() {
   
       // Use the correct userid from the QR code
       const response = await axios.get(
-        `http://192.168.8.187:5000/api/pickupgarbage/getbyuserid/${bookingDetails._id}`
+        `http://192.168.8.154:5000/api/pickupgarbage/getbyuserid/${bookingDetails._id}`
       );
   
       if (response.data.length > 0) {

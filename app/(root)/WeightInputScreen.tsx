@@ -17,7 +17,7 @@ export default function WeightInput() {
 
       // Fetch the pickup request data using request ID
       axios
-        .get(`http://192.168.8.187:5000/api/pickupgarbage/getbyuserid/${requestId}`)
+        .get(`http://192.168.8.154:5000/api/pickupgarbage/getbyuserid/${requestId}`)
         .then((res) => {
           if (res.data && res.data.length > 0) {
             setResponse(res.data[0]); // Assume the first item is the one we need
