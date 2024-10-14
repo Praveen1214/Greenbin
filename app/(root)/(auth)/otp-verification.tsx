@@ -42,7 +42,7 @@ const OTPVerificationScreen = () => {
       try {
         // Simulating API call
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        const response = await axios.post(`http://192.168.8.174:5000/api/passenger/login`, {
+        const response = await axios.post(`http://192.168.8.187:5000/api/passenger/login`, {
           contact
         });
 
@@ -54,7 +54,7 @@ const OTPVerificationScreen = () => {
 
           if (passengerDetails.role === "Driver") {
             router.push({
-              pathname: "/(root)/GarbageMap",
+              pathname: "/(driver)/GarbageMap",
             });
           }
           else {
