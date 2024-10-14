@@ -1,18 +1,19 @@
-// RequestsList.tsx (activity.tsx)
 import React, { useState } from "react";
-import { View, FlatList, Text, Modal } from "react-native";
+import { View, FlatList, Text, Modal, TouchableOpacity, Alert } from "react-native"; // Added TouchableOpacity
 import tw from "twrnc";
 import { useRequests } from "../hooks/useRequests";
 import RequestDetails from "@/components/RequestDetails";
 import EditRequestForm from "@/components/EditRequestForm";
 import RequestItem from "@/components/RequestItem";
 import { cancelRequest, updateRequest } from "../services/RequestService";
-import { Alert } from "react-native";
+import { AntDesign } from "@expo/vector-icons"; // Ensure this is imported
+import { useRouter } from "expo-router"; // Import the router hook
 
 const RequestsList = () => {
   const { requests, loadRequests } = useRequests();
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter(); // Initialize the router for navigation
 
   const handleCancelRequest = async (item) => {
     try {

@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import { AntDesign } from '@expo/vector-icons'; // Import Ant Design icons
+import { AntDesign } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import tw from 'twrnc';
-import FormField from '@/components/FormField'; // Reusable form field component
-import { submitRequestItem } from '../../services/RequestItemService'; // API service
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FormField from '@/components/FormField';
+import { submitRequestItem } from '../../services/RequestItemService';
 
 const RequestItem = () => {
   const [quantity, setQuantity] = useState(5);
@@ -21,7 +22,7 @@ const RequestItem = () => {
   const [beneficiaryName, setBeneficiaryName] = useState('');
   const [bank, setBank] = useState('');
   const [accountNo, setAccountNo] = useState('');
-  const { category } = useRouter().params;
+  const { category } = useLocalSearchParams();
   const router = useRouter();
   const pricePerKg = 250;
   const totalSellPrice = quantity * pricePerKg;
@@ -41,7 +42,6 @@ const RequestItem = () => {
     getPassengerDetails();
   }, []);
 
-  // Define Ant Design icons based on the category
   const getAntDesignIcon = (category) => {
     switch (category) {
       case "Paper":
@@ -52,7 +52,7 @@ const RequestItem = () => {
         return <AntDesign name="tool" size={50} color="black" />;
       case "Clothes":
         return <AntDesign name="skin" size={50} color="black" />;
-      case "E waste":
+      case "E-waste":
         return <AntDesign name="laptop" size={50} color="black" />;
       case "Glass":
         return <AntDesign name="medicinebox" size={50} color="black" />;
@@ -109,7 +109,7 @@ const RequestItem = () => {
         <View style={tw`p-5 mx-4 mt-4 mb-5 bg-green-100 rounded-lg`}>
           <View style={tw`flex-row justify-between p-5`}>
             <View style={tw`items-start mt-12`}>
-              {getAntDesignIcon(category)}  {/* Ant Design Icon for Garbage Category */}
+              {getAntDesignIcon(category)}
               <Text style={tw`mt-2 text-lg`}>{category}</Text>
             </View>
             <View style={tw`flex-col items-end`}>

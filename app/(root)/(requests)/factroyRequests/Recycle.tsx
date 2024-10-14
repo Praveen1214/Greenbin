@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { TailwindProvider } from "tailwindcss-react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import MaterialCommunityIcons
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -17,9 +17,9 @@ const Resycle = () => {
       icon: (
         <MaterialCommunityIcons name="bottle-soda" size={24} color="black" />
       )
-    }, // Use MaterialCommunityIcons for plastic
+    },
     {
-      name: "Metol",
+      name: "Metal",
       icon: <FontAwesome5 name="tools" size={24} color="black" />
     },
     {
@@ -27,7 +27,7 @@ const Resycle = () => {
       icon: <FontAwesome5 name="tshirt" size={24} color="black" />
     },
     {
-      name: "E waste",
+      name: "E-waste",
       icon: <FontAwesome5 name="laptop" size={24} color="black" />
     },
     {
@@ -36,10 +36,10 @@ const Resycle = () => {
     }
   ];
 
-  const handleNavigate = (category) => {
+  const handleCategoryPress = (categoryName) => {
     router.push({
-      pathname: "/Requestitem",
-      params: { category: category.name }
+      pathname: "/(requests)/factroyRequests/Requestitem",
+      params: { category: categoryName }
     });
   };
 
@@ -50,37 +50,23 @@ const Resycle = () => {
           <TouchableOpacity onPress={() => router.back()}>
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 24,
-              fontWeight: "700",
-              color: "white",
-              marginLeft: 16
-            }}
-          >
-            {" "}
-            Recycle{" "}
+          <Text style={{ fontSize: 24, fontWeight: "700", color: "white", marginLeft: 16 }}>
+            Recycle
           </Text>
         </View>
       </View>
 
       <View className="flex-1 p-5 bg-gray-100">
-        <Text className="mb-5 text-lg text-gray-700">
-          {" "}
-          What do you want to collect ?{" "}
-        </Text>
+        <Text className="mb-5 text-lg text-gray-700">What do you want to collect?</Text>
         <View className="flex-row flex-wrap justify-between">
           {categories.map((category, index) => (
             <TouchableOpacity
               key={index}
               className="w-[45%] bg-gray-200 rounded-lg p-5 mb-5 items-center"
-              onPress={() => handleNavigate(category)}
+              onPress={() => handleCategoryPress(category.name)}
             >
               {category.icon}
-              <Text className="mt-3 text-base font-semibold text-gray-700">
-                {" "}
-                {category.name}{" "}
-              </Text>
+              <Text className="mt-3 text-base font-semibold text-gray-700">{category.name}</Text>
             </TouchableOpacity>
           ))}
         </View>
