@@ -53,5 +53,28 @@ router.get("/getallrequestitems",async(req,res)=>{
 });
 
 
+router.route('/getallrequestitems/:contact').get(async (req, res) => {
+
+    const usercontact = req.params.contact;
+
+    try {
+
+        const req = await RequestItem.find({ contact: usercontact });
+
+        if (!req) {
+            return res.status(404).json({ status: "req not found" });
+        }
+
+        return res.status(200).json({ status: "req is fatched", req });
+
+    } catch (error) {
+
+        return res.status(500).json({ status: "Error with fetch req", message: error });
+
+    }
+});
+
+
+
 
 module.exports = router;
