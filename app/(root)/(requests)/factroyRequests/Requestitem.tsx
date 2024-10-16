@@ -50,13 +50,7 @@ const RequestItem = () => {
       case "Paper":
         return <FontAwesome5 name="newspaper" size={32} color="#4CAF50" />;
       case "Plastic":
-        return (
-          <MaterialCommunityIcons
-            name="bottle-soda"
-            size={32}
-            color="#2196F3"
-          />
-        );
+        return (<MaterialCommunityIcons name="bottle-soda" size={32} color="#2196F3" />);
       case "Metal":
         return <FontAwesome5 name="tools" size={32} color="#FF9800" />;
       case "Clothes":
