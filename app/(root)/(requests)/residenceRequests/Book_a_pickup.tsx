@@ -99,7 +99,7 @@ const Book_a_pickup = () => {
         </View>
 
         <View style={tw`p-5 mx-4 mt-5 mb-5 bg-green-100 rounded-lg shadow-md`}>
-          <View style={tw`flex-row justify-between items-center`}>
+          <View style={tw`flex-row items-center justify-between`}>
             <Image
               source={Garbagebag}
               style={{ width: 100, height: 100 }}
@@ -112,7 +112,7 @@ const Book_a_pickup = () => {
         </View>
 
         <View style={tw`p-4`}>
-          <Text style={tw`mb-4 text-gray-600 font-semibold`}>Pickup Address</Text>
+          <Text style={tw`mb-4 font-semibold text-gray-600`}>Pickup Address</Text>
           <GoogleTextInput
             icon={null}
             initialLocation={location ? location.address : null}
@@ -123,7 +123,7 @@ const Book_a_pickup = () => {
         </View>
 
         <View style={tw`p-4 mb-4`}>
-          <Text style={tw`text-gray-600 font-semibold mb-2`}>Select Garbage Types</Text>
+          <Text style={tw`mb-2 font-semibold text-gray-600`}>Select Garbage Types</Text>
           <View style={tw`flex-row flex-wrap`}>
             {garbageTypes.map((type) => (
               <TouchableOpacity
@@ -143,7 +143,7 @@ const Book_a_pickup = () => {
         </View>
 
         <View style={tw`p-4`}>
-          <Text style={tw`text-gray-600 font-semibold mb-2`}>Additional Notes</Text>
+          <Text style={tw`mb-2 font-semibold text-gray-600`}>Additional Notes</Text>
           <TextInput
             style={tw`h-24 p-4 border border-gray-300 rounded-md`}
             multiline
@@ -162,7 +162,7 @@ const Book_a_pickup = () => {
           {isLoading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text style={tw`font-semibold text-center text-white text-lg`}>Schedule Pickup</Text>
+            <Text style={tw`text-lg font-semibold text-center text-white`}>Schedule Pickup</Text>
           )}
         </TouchableOpacity>
 

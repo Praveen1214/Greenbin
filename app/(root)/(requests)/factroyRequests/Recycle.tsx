@@ -55,7 +55,7 @@ const Recycle = () => {
             <TouchableOpacity onPress={() => router.back()} className="p-2">
               <AntDesign name="arrowleft" size={24} color="white" />
             </TouchableOpacity>
-            <Text className="text-2xl font-bold text-white ml-2">
+            <Text className="ml-2 text-2xl font-bold text-white">
               Recycle
             </Text>
           </View>
@@ -72,11 +72,11 @@ const Recycle = () => {
                 className="w-[48%] bg-white rounded-xl p-4 mb-4 items-center shadow-md"
                 onPress={() => handleCategoryPress(category.name)}
               >
-                <View className="bg-gray-100 rounded-full p-4 mb-2">
+                <View className="p-4 mb-2 bg-gray-100 rounded-full">
                   {category.icon}
                 </View>
-                <Text className="text-lg font-semibold text-gray-800 mb-1">{category.name}</Text>
-                <Text className="text-xs text-gray-600 text-center">{category.description}</Text>
+                <Text className="mb-1 text-lg font-semibold text-gray-800">{category.name}</Text>
+                <Text className="text-xs text-center text-gray-600">{category.description}</Text>
               </TouchableOpacity>
             ))}
           </View>
