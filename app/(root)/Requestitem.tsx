@@ -295,10 +295,7 @@ const RequestItem = () => {
                 >
                   <Picker.Item label="Select Bank" value="" />
                   <Picker.Item label="BOC" value="BOC" />
-                  <Picker.Item
-                    label="Commercial Bank"
-                    value="Commercial Bank"
-                  />
+                  <Picker.Item label="Commercial Bank" value="Commercial Bank" />
                   <Picker.Item label="DFCC Bank" value="DFCC Bank" />
                   <Picker.Item label="HNB" value="HNB" />
                   <Picker.Item label="NSB" value="NSB" />

@@ -6,121 +6,272 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
-  Platform
+  Platform,
+  StyleSheet
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // Use expo-router's router hook
-import { useNavigation } from "@react-navigation/native";
-import { useUserDetails } from "../hooks/useUserDetails"; // Importing the custom hook
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useUserDetails } from "../hooks/useUserDetails";
 
 const HomeScreen = () => {
-  const router = useRouter(); // Initialize the router for navigation
+  const router = useRouter();
+  const { userName } = useUserDetails();
 
-  const navigation = useNavigation();
-  const { userName } = useUserDetails(); // Use the custom hook for user data
+  const navigateTo = (screen) => {
+    router.push(screen);
+  };
 
-  const platformSpecificStyle = Platform.select({
-    ios: "mb-1",
-    android: "mt-2 mb-2"
-  });
-
-// Function to navigate to specific screen
-const navigateTo = (screen: string) => {
-  router.push(screen); // Use router.push for expo-router navigation
-};
-
-const menuItems = [
-  { icon: "truck", text: "Shedule", navigateTo: "(requests)/residenceRequests/Book_a_pickup" }, // Correct path
-  { icon: "refresh-cw", text: "Recycle", navigateTo: "(requests)/factroyRequests/Recycle" },
-  { icon: "book-open", text: "Learn", navigateTo: "(requests)/residenceRequests/QRCodeScanner" },
-  { icon: "file-text", text: "News", navigateTo: "QRCodeGenerator" }
-];
-  
+  const menuItems = [
+    { icon: "truck", text: "Schedule Pickup", navigateTo: "(requests)/residenceRequests/Book_a_pickup" },
+    { icon: "recycle", text: "Recycle", navigateTo: "(requests)/factroyRequests/Recycle", iconSet: FontAwesome5 },
+    { icon: "book-open", text: "Learn", navigateTo: "(requests)/residenceRequests/QRCodeScanner" },
+    { icon: "newspaper", text: "Eco News", navigateTo: "QRCodeGenerator", iconSet: FontAwesome5 }
+  ];
 
   return (
-    <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
-      
-      <ScrollView style={{ flex: 1 }}>
-        {/* Welcome Section */}
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
         <HeaderSection userName={userName} />
-
-        {/* Recycling Promotion Section */}
         <PromotionSection />
-
-        {/* Menu Items Section */}
+        <EcoTipSection />
         <MenuSection menuItems={menuItems} onItemPress={navigateTo} />
-
-        {/* Contact Section */}
         <ContactSection />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// Extracted HeaderSection component
 const HeaderSection = ({ userName }) => (
-  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16 }}>
+  <View style={styles.header}>
     <View>
-      <Text style={{ color: "#4CAF50", fontSize: 14 }}>Welcome</Text>
-      <Text style={{ color: "black", fontSize: 24, fontWeight: "bold" }}>{userName}</Text>
+      <Text style={styles.welcomeText}>Welcome</Text>
+      <Text style={styles.userName}>{userName}</Text>
     </View>
-    <TouchableOpacity style={{ padding: 8 }}>
-      <Feather name="bell" size={24} color="black" />
+    <TouchableOpacity style={styles.iconButton}>
+      <Feather name="bell" size={24} color="#2E7D32" />
     </TouchableOpacity>
   </View>
 );
 
-// Extracted PromotionSection component
 const PromotionSection = () => (
-  <View style={{ backgroundColor: "white", borderRadius: 30, margin: 16, padding: 24, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-    <View style={{ flex: 1 }}>
-      <Text style={{ color: "black", fontSize: 20, fontWeight: "bold" }}>Don't throw away,</Text>
-      <Text style={{ color: "black", fontSize: 20, fontWeight: "bold" }}>recycle for another day</Text>
-      <Text style={{ color: "#4CAF50", fontSize: 18, fontWeight: "semibold", marginTop: 8 }}>Recycle with us</Text>
-      <TouchableOpacity style={{ backgroundColor: "#4CAF50", borderRadius: 9999, paddingVertical: 8, paddingHorizontal: 24, alignSelf: "flex-start", marginTop: 16 }}>
-        <Text style={{ color: "white", fontWeight: "bold" }}>Let's start</Text>
+  <View style={styles.promotionContainer}>
+    <View style={styles.promotionContent}>
+      <Text style={styles.promotionTitle}>Don't throw away,</Text>
+      <Text style={styles.promotionTitle}>recycle for another day</Text>
+      <Text style={styles.promotionSubtitle}>Recycle with us</Text>
+      <TouchableOpacity style={styles.startButton}>
+        <Text style={styles.startButtonText}>Let's start</Text>
       </TouchableOpacity>
     </View>
-    <Image source={{ uri: "https://example.com/recycling-illustration.png" }} style={{ width: 128, height: 128 }} resizeMode="contain" />
+    <Image source={{ uri: "https://clipart-library.com/images/6TpopbX7c.jpg" }} style={styles.promotionImage} resizeMode="contain" />
   </View>
 );
 
-// Extracted MenuSection component
+const EcoTipSection = () => (
+  <View style={styles.ecoTipContainer}>
+    <FontAwesome5 name="leaf" size={24} color="#2E7D32" style={styles.ecoTipIcon} />
+    <Text style={styles.ecoTipText}>Eco Tip: Use reusable bags when shopping to reduce plastic waste.</Text>
+  </View>
+);
+
 const MenuSection = ({ menuItems, onItemPress }) => (
-  <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", padding: 16 }}>
+  <View style={styles.menuContainer}>
     {menuItems.map((item, index) => (
       <TouchableOpacity
         key={index}
-        style={{ backgroundColor: "white", borderRadius: 20, padding: 16, width: "48%", alignItems: "center", marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}
+        style={styles.menuItem}
         onPress={() => onItemPress(item.navigateTo)}
       >
-        <View style={{ backgroundColor: "#E8F5E9", padding: 12, borderRadius: 9999, marginBottom: 8 }}>
-          <Feather name={item.icon} size={24} color="#4CAF50" />
+        <View style={styles.menuItemIconContainer}>
+          {item.iconSet ? (
+            <item.iconSet name={item.icon} size={24} color="#2E7D32" />
+          ) : (
+            <Feather name={item.icon} size={24} color="#2E7D32" />
+          )}
         </View>
-        <Text style={{ color: "#4CAF50", fontWeight: "semibold" }}>{item.text}</Text>
+        <Text style={styles.menuItemText}>{item.text}</Text>
       </TouchableOpacity>
     ))}
   </View>
 );
 
-// Extracted ContactSection component
 const ContactSection = () => (
-  <>
-    <Text style={{ color: "black", fontSize: 20, fontWeight: "bold", marginHorizontal: 16, marginBottom: 8 }}>Contact Us</Text>
-    <View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 16, marginBottom: 24 }}>
+  <View style={styles.contactContainer}>
+    <Text style={styles.contactTitle}>Contact Us</Text>
+    <View style={styles.contactButtonsContainer}>
       <ContactButton icon="mail" text="Send Email" />
       <ContactButton icon="phone" text="Call Now" />
     </View>
-  </>
+  </View>
 );
 
 const ContactButton = ({ icon, text }) => (
-  <TouchableOpacity
-    style={{ backgroundColor: "white", flexDirection: "row", alignItems: "center", borderRadius: 9999, paddingVertical: 12, paddingHorizontal: 24, flex: 1, marginRight: 8, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}
-  >
-    <Feather name={icon} size={20} color="#4CAF50" />
-    <Text style={{ color: "#4CAF50", fontWeight: "semibold", marginLeft: 8 }}>{text}</Text>
+  <TouchableOpacity style={styles.contactButton}>
+    <Feather name={icon} size={20} color="#2E7D32" />
+    <Text style={styles.contactButtonText}>{text}</Text>
   </TouchableOpacity>
 );
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#E8F5E9',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: '#C8E6C9',
+  },
+  welcomeText: {
+    color: "#2E7D32",
+    fontSize: 14,
+  },
+  userName: {
+    color: "#1B5E20",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  iconButton: {
+    padding: 8,
+  },
+  promotionContainer: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    margin: 16,
+    padding: 24,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  promotionContent: {
+    flex: 1,
+  },
+  promotionTitle: {
+    color: "#1B5E20",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  promotionSubtitle: {
+    color: "#2E7D32",
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 8,
+  },
+  startButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    alignSelf: "flex-start",
+    marginTop: 16,
+  },
+  startButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  promotionImage: {
+    width: 120,
+    height: 120,
+  },
+  ecoTipContainer: {
+    backgroundColor: "#C8E6C9",
+    borderRadius: 20,
+    margin: 16,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ecoTipIcon: {
+    marginRight: 12,
+  },
+  ecoTipText: {
+    color: "#1B5E20",
+    fontSize: 14,
+    flex: 1,
+  },
+  menuContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: 16,
+  },
+  menuItem: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 16,
+    width: "48%",
+    alignItems: "center",
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  menuItemIconContainer: {
+    backgroundColor: "#E8F5E9",
+    padding: 12,
+    borderRadius: 50,
+    marginBottom: 8,
+  },
+  menuItemText: {
+    color: "#2E7D32",
+    fontWeight: "600",
+  },
+  contactContainer: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+  },
+  contactTitle: {
+    color: "#1B5E20",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  contactButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  contactButton: {
+    backgroundColor: "white",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    flex: 1,
+    marginHorizontal: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  contactButtonText: {
+    color: "#2E7D32",
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  bottomNavigation: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "white",
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#C8E6C9",
+  },
+});
 
 export default HomeScreen;
