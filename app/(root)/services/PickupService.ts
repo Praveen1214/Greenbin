@@ -1,7 +1,7 @@
 // services/PickupService.ts
 import axios from "axios";
 
-const BASE_URL = "http://192.168.8.187:5000/api/pickupgarbage";
+const BASE_URL = "http://192.168.8.174:5000/api/pickupgarbage";
 
 // Fetch pickup data by request ID
 export const fetchPickupDataByUserId = async (requestId) => {
