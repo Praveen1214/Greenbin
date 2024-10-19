@@ -27,8 +27,8 @@ router.post('/addmanagers', async (req, res) => {
       address
     });
 
-    await manager.save();
-    res.status(201).json(manager);
+    const savedManager = await manager.save();
+    res.status(201).json(savedManager);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

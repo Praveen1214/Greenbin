@@ -27,9 +27,10 @@ router.get('/getallpickupgarbage', async (req, res) => {
     const allpickups = await PickupGarbage.find();
     return res.json(allpickups);
   } catch (error) {
-    return res.status(400).json({ message: error });
+    return res.status(400).json({ message: 'Database error', error: error.message });
   }
 });
+
 
 router.get('/getbyuserid/:userid', async (req, res) => {
   try {

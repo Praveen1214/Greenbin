@@ -6,11 +6,9 @@ import PickupList from "@/components/PickupList";
 import { useGarbagePickups } from "../hooks/useGarbagePickups";
 import { useCurrentLocation } from "../hooks/useCurrentLocation";
 import Track from "./Track";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { handleLogout } from "../(auth)/logout"; // Moved logout to a separate file
 
 const GarbageMap = () => {
-  const router = useRouter();
   const { pickupGarbage } = useGarbagePickups();
   const { currentLocation, mapRegion } = useCurrentLocation();
   const [selectedPickup, setSelectedPickup] = useState(null);
@@ -42,18 +40,9 @@ const GarbageMap = () => {
     setShowDirections(false); // Hide the Track component
   };
 
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("passengerDetails");
-      router.replace("/(auth)/sign-in");
-    } catch (error) {
-      Alert.alert("Error", "Failed to log out. Please try again.");
-    }
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <MapHeader onLogout={handleLogout} />
+      <MapHeader onLogout={handleLogout} /> {/* Now using a utility for logout */}
 
       {/* Map */}
       <View style={{ flex: 1 }}>
