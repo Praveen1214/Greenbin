@@ -73,4 +73,14 @@ router.post('/updateweights', async (req, res) => {
   }
 });
 
+router.get('/getallpickupgarbage', async (req, res) => {
+  try {
+    const allpickups = await PickupGarbage.find();
+    return res.json(allpickups);  // This should return the data array with location fields
+  } catch (error) {
+    return res.status(400).json({ message: 'Error fetching data', error: error.message });
+  }
+});
+
+
 module.exports = router;

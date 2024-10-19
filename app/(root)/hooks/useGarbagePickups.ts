@@ -9,7 +9,8 @@ export const useGarbagePickups = () => {
   const loadGarbagePickups = async () => {
     try {
       const data = await fetchGarbagePickups();
-      setPickupGarbage(data);
+      console.log("Fetched Pickups:", data); // Log the data here
+      setPickupGarbage(data);  // Make sure data is correctly set
     } catch (error) {
       Alert.alert(
         "Error",
@@ -24,3 +25,4 @@ export const useGarbagePickups = () => {
 
   return { pickupGarbage };
 };
+
