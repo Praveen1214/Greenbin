@@ -35,6 +35,7 @@ router.get('/getallpickupgarbage', async (req, res) => {
 router.get('/getbyuserid/:userid', async (req, res) => {
   try {
     const pickups = await PickupGarbage.find({ userid: req.params.userid });
+    console.log(pickups);
 
     if (pickups.length > 0) {
       return res.json(pickups);
@@ -47,18 +48,25 @@ router.get('/getbyuserid/:userid', async (req, res) => {
 });
 
 router.post('/updateweights', async (req, res) => {
-  const { userId, weights } = req.body; // Get requestId (pickup ID) and weights
+  const { pickupId, weights } = req.body;
   const costPerKg = 250; // LKR 250 per kg
 
   try {
-    const pickup = await PickupGarbage.findById(userId); // Use requestId to find the booking
+    const pickup = await PickupGarbage.findById(pickupId);
     if (!pickup) {
-      return res.status(404).json({ message: 'Booking not found' });
+      return res.status(404).json({ message: 'Pickup request not found' });
     }
 
-    // Update the weights and calculate the total cost
+    if (!weights || typeof weights !== 'object') {
+      return res.status(400).json({ message: 'Invalid weights provided' });
+    }
+
     pickup.weights = weights;
-    const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+
+    const totalWeight = Object.values(weights)
+      .map(Number)
+      .reduce((sum, weight) => sum + weight, 0);
+
     const totalCost = totalWeight * costPerKg;
     pickup.totalCost = totalCost;
 

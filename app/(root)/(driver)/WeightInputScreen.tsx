@@ -4,6 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useWeights } from '../hooks/useWeights';
 import { usePickupData } from '../hooks/usePickupData';
 import { submitWeights } from '../services/PickupService';
+import { getPickupByUserId } from '../services/PickupService';
 import { MaterialIcons } from '@expo/vector-icons';  // Import icons for back navigation
 
 export default function WeightInput() {
@@ -23,17 +24,17 @@ export default function WeightInput() {
   }, [request, navigation]);
 
   const handleSubmit = async () => {
-    if (!request?._id) {
-      Alert.alert('Error', 'No request data available.');
+    if (!pickupData?._id) {
+      Alert.alert('Error', 'No pickup data available.');
       return;
     }
-
+  
     setIsSubmitting(true);
     try {
-      const response = await submitWeights(request._id, weights);
+      const response = await submitWeights(pickupData._id, weights);
       if (response?.totalCost) {
         Alert.alert('Success', `Total cost submitted: LKR ${response.totalCost.toFixed(2)}`, [
-          { text: 'OK', onPress: () => navigation.navigate('Home') }
+          { text: 'OK', onPress: () => navigation.navigate('GarbageMap') }
         ]);
       } else {
         throw new Error('Failed to submit weights');
