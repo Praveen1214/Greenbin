@@ -1,126 +1,140 @@
 const request = require('supertest');
-   const express = require('express');
-   const passengerRouter = require('../routes/PassengerRoute');
-   const Passengers = require('../models/Passenger');
+const express = require('express');
+const passengerRouter = require('../routes/PassengerRoute');
+const Passengers = require('../models/Passenger');
 
-   const app = express();
-   app.use(express.json());
-   app.use('/', passengerRouter);
+const app = express();
+app.use(express.json());
+app.use('/', passengerRouter);
 
-   // Mock the Passenger model
-   jest.mock('../models/Passenger');
+// Mock the Passenger model
+jest.mock('../models/Passenger');
 
-   describe('Passenger Routes', () => {
-     describe('POST /register', () => {
-       it('should register a new passenger', async () => {
-         const mockPassenger = {
-           firstname: 'John',
-           lastname: 'Doe',
-           email: 'john@example.com',
-           gender: 'Male',
-           contact: '1234567890',
-         };
+describe('Passenger Routes', () => {
+  describe('POST /register', () => {
+    it('should register a new passenger (positive case)', async () => {
+      const mockPassenger = {
+        firstname: 'John',
+        lastname: 'Doe',
+        email: 'john@example.com',
+        gender: 'Male',
+        contact: '1234567890',
+      };
 
-         Passengers.prototype.save.mockResolvedValue(mockPassenger);
+      Passengers.prototype.save.mockResolvedValue(mockPassenger);
 
-         const res = await request(app)
-           .post('/register')
-           .send(mockPassenger);
+      const res = await request(app)
+        .post('/register')
+        .send(mockPassenger);
 
-         expect(res.statusCode).toBe(200);
-         expect(res.body).toEqual({ status: "Passenger is registered successfully" });
-       });
+      console.log('Positive Test Case: Successfully registered new passenger.');
 
-       it('should return 500 if registration fails', async () => {
-         const mockPassenger = {
-           firstname: 'John',
-           lastname: 'Doe',
-           email: 'john@example.com',
-           gender: 'Male',
-           contact: '1234567890',
-         };
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ status: "Passenger is registered successfully" });
+    });
 
-         Passengers.prototype.save.mockRejectedValue(new Error('Database error'));
+    it('should return 500 if registration fails (negative case)', async () => {
+      const mockPassenger = {
+        firstname: 'John',
+        lastname: 'Doe',
+        email: 'john@example.com',
+        gender: 'Male',
+        contact: '1234567890',
+      };
 
-         const res = await request(app)
-           .post('/register')
-           .send(mockPassenger);
+      Passengers.prototype.save.mockRejectedValue(new Error('Database error'));
 
-         expect(res.statusCode).toBe(500);
-         expect(res.body.status).toBe("Error with register passenger");
-       });
-     });
+      const res = await request(app)
+        .post('/register')
+        .send(mockPassenger);
 
-     describe('POST /login', () => {
-       it('should login a passenger successfully', async () => {
-         const mockPassenger = {
-           _id: '123',
-           firstname: 'John',
-           lastname: 'Doe',
-           email: 'john@example.com',
-           gender: 'Male',
-           contact: '1234567890',
-           role: 'passenger',
-         };
+      console.log('Negative Test Case: Failed to register passenger - Database error.');
 
-         Passengers.findOne.mockResolvedValue(mockPassenger);
+      expect(res.statusCode).toBe(500);
+      expect(res.body.status).toBe("Error with register passenger");
+    });
+  });
 
-         const res = await request(app)
-           .post('/login')
-           .send({ contact: '1234567890' });
+  describe('POST /login', () => {
+    it('should login a passenger successfully (positive case)', async () => {
+      const mockPassenger = {
+        _id: '123',
+        firstname: 'John',
+        lastname: 'Doe',
+        email: 'john@example.com',
+        gender: 'Male',
+        contact: '1234567890',
+        role: 'passenger',
+      };
 
-         expect(res.statusCode).toBe(200);
-         expect(res.body.status).toBe("Login Success");
-         expect(res.body.loginPassenger).toEqual(mockPassenger);
-       });
+      Passengers.findOne.mockResolvedValue(mockPassenger);
 
-       it('should return 500 if login fails', async () => {
-         Passengers.findOne.mockResolvedValue(null);
+      const res = await request(app)
+        .post('/login')
+        .send({ contact: '1234567890' });
 
-         const res = await request(app)
-           .post('/login')
-           .send({ contact: '1234567890' });
+      console.log('Positive Test Case: Successfully logged in passenger.');
 
-         expect(res.statusCode).toBe(500);
-         expect(res.body.status).toBe("The contact is incorrect");
-       });
-     });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.status).toBe("Login Success");
+      expect(res.body.loginPassenger).toEqual(mockPassenger);
+    });
 
-     describe('GET /getProfile/:userId', () => {
-       it('should fetch user profile successfully', async () => {
-         const mockProfile = {
-           _id: '123',
-           firstname: 'John',
-           lastname: 'Doe',
-           email: 'john@example.com',
-           gender: 'Male',
-           contact: '1234567890',
-         };
+    it('should return 500 if login fails (negative case)', async () => {
+      Passengers.findOne.mockResolvedValue(null);
 
-         Passengers.findById.mockResolvedValue(mockProfile);
+      const res = await request(app)
+        .post('/login')
+        .send({ contact: '1234567890' });
 
-         const res = await request(app).get('/getProfile/123');
+      console.log('Negative Test Case: Failed to login - Incorrect contact.');
 
-         expect(res.statusCode).toBe(200);
-         expect(res.body).toEqual(mockProfile);
-       });
+      expect(res.statusCode).toBe(500);
+      expect(res.body.status).toBe("The contact is incorrect");
+    });
+  });
 
-       it('should return 404 if user not found', async () => {
-         Passengers.findById.mockResolvedValue(null);
+  describe('GET /getProfile/:userId', () => {
+    it('should fetch user profile successfully (positive case)', async () => {
+      const mockProfile = {
+        _id: '123',
+        firstname: 'John',
+        lastname: 'Doe',
+        email: 'john@example.com',
+        gender: 'Male',
+        contact: '1234567890',
+      };
 
-         const res = await request(app).get('/getProfile/123');
+      Passengers.findById.mockResolvedValue(mockProfile);
 
-         expect(res.statusCode).toBe(404);
-         expect(res.body.message).toBe('User not found');
-       });
+      const res = await request(app).get('/getProfile/123');
 
-       it('should return 404 if user not found', async () => {
-  Passengers.findById.mockResolvedValue(undefined);
+      console.log('Positive Test Case: Successfully fetched user profile.');
 
-  const res = await request(app).get('/getProfile/123');
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockProfile);
+    });
 
-  expect(res.statusCode).toBe(404);
-  expect(res.body.message).toBe('User not found');
+    it('should return 404 if user not found (negative case)', async () => {
+      Passengers.findById.mockResolvedValue(null);
+
+      const res = await request(app).get('/getProfile/123');
+
+    //  console.log('Negative Test Case: User not found for ID 123.');
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+
+    it('should return 404 if user not found (negative case)', async () => {
+      Passengers.findById.mockResolvedValue(undefined);
+
+      const res = await request(app).get('/getProfile/123');
+
+     // console.log('Negative Test Case: User not found for ID 123 (undefined result).');
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+  });
 });
-     });
-   });

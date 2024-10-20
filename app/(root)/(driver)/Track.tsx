@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
-import { AntDesign } from '@expo/vector-icons';
-import Garbagetruck from "@/assets/images/garbagetruck.png";
-import Garbagebag from "@/assets/images/garbageba.png";
-import Entypo from '@expo/vector-icons/Entypo';
+import { Entypo } from '@expo/vector-icons';
+import Garbagetruck from "../../../assets/images/garbagetruck.png";
+import Garbagebag from "../../../assets/images/garbageba.png";
 import { fetchDirections } from '../services/DirectionsService';
 
 const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete }) => {
@@ -12,10 +11,12 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
   const [estimatedTime, setEstimatedTime] = useState('');
   const [distance, setDistance] = useState('');
   const [completed, setCompleted] = useState(false);
+  const [mapRegion, setMapRegion] = useState(null);
 
   useEffect(() => {
     if (currentLocation && selectedPickup) {
       getRoute();
+      updateMapRegion();
     }
   }, [currentLocation, selectedPickup]);
 
@@ -33,13 +34,22 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
     }
   };
 
+  const updateMapRegion = () => {
+    setMapRegion({
+      latitude: (currentLocation.latitude + selectedPickup.location.latitude) / 2,
+      longitude: (currentLocation.longitude + selectedPickup.location.longitude) / 2,
+      latitudeDelta: Math.abs(currentLocation.latitude - selectedPickup.location.latitude) * 1.5,
+      longitudeDelta: Math.abs(currentLocation.longitude - selectedPickup.location.longitude) * 1.5,
+    });
+  };
+
   const handleComplete = () => {
     setCompleted(true);
     Alert.alert("Success", "Garbage collection completed successfully!");
-    onComplete(); // Call the onComplete function passed from the parent component
+    onComplete();
   };
 
-  if (!currentLocation || !selectedPickup || !route) {
+  if (!currentLocation || !selectedPickup || !route || !mapRegion) {
     return null;
   }
 
@@ -60,13 +70,11 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
       {/* Map */}
       <MapView
         style={{ flex: 1 }}
-        initialRegion={{
-          latitude: (currentLocation.latitude + selectedPickup.location.latitude) / 2,
-          longitude: (currentLocation.longitude + selectedPickup.location.longitude) / 2,
-          latitudeDelta: Math.abs(currentLocation.latitude - selectedPickup.location.latitude) * 1.5,
-          longitudeDelta: Math.abs(currentLocation.longitude - selectedPickup.location.longitude) * 1.5,
-        }}
+        region={mapRegion}
+        showsUserLocation={true}
+        followsUserLocation={true}
       >
+        {/* Marker for Driver's Current Location with Garbagetruck Icon */}
         <Marker
           coordinate={{
             latitude: currentLocation.latitude,
@@ -80,6 +88,7 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
           />
         </Marker>
 
+        {/* Marker for Garbage Pickup Location with Garbagebag Icon */}
         {!completed && (
           <Marker
             coordinate={{
@@ -95,6 +104,7 @@ const Track = ({ currentLocation, selectedPickup, onCloseTracking, onComplete })
           </Marker>
         )}
 
+        {/* Polyline for Route */}
         <Polyline
           coordinates={route}
           strokeColor="#0C6C41"

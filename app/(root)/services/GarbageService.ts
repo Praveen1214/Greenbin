@@ -1,7 +1,7 @@
 // services/GarbageService.ts
 import axios from "axios";
 
-const BASE_URL = "http://192.168.8.154:5000/api/pickupgarbage";
+const BASE_URL = "http://192.168.235.96:5000/api/pickupgarbage";
 
 export const fetchGarbagePickups = async () => {
   try {
