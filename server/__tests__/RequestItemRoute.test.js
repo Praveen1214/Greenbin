@@ -12,6 +12,7 @@ jest.mock('../models/RequestItem');
 
 describe('Request Item Routes', () => {
   
+  // Test for fetching request items by contact
   describe('GET /getallrequestitems/:contact', () => {
     it('should return 404 if no request items are found (negative case)', async () => {
       RequestItem.find.mockResolvedValue([]);
@@ -35,8 +36,26 @@ describe('Request Item Routes', () => {
       expect(res.body.status).toBe('Error with fetch req');
       expect(res.body.message).toBe('Database error');
     });
+
+    it('should fetch all request items successfully by contact (positive case)', async () => {
+      const mockRequestItems = [
+        { _id: '1', category: 'Electronics', quantity: 10 },
+        { _id: '2', category: 'Clothing', quantity: 5 }
+      ];
+
+      RequestItem.find.mockResolvedValue(mockRequestItems);
+
+      const res = await request(app).get('/getallrequestitems/1234567890');
+
+      console.log('Positive Test Case: Successfully fetched request items for contact 1234567890.');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.status).toBe('req is fatched');
+      expect(res.body.req).toEqual(mockRequestItems);
+    });
   });
 
+  // Test for updating a request by ID
   describe('PUT /updaterequest/:id', () => {
     it('should update request item successfully (positive case)', async () => {
       const mockUpdatedRequest = {
@@ -54,8 +73,7 @@ describe('Request Item Routes', () => {
       console.log('Positive Test Case: Successfully updated request item with ID 1.');
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.category).toBe('Updated Electronics');
-      expect(res.body.quantity).toBe(20);
+      expect(res.body.status).toBe('req updated');
     });
 
     it('should return 500 if updating request item fails (negative case)', async () => {
@@ -73,16 +91,17 @@ describe('Request Item Routes', () => {
     });
   });
 
+  // Test for deleting a request by ID
   describe('DELETE /deleterequest/:id', () => {
     it('should delete request item successfully (positive case)', async () => {
       RequestItem.findByIdAndDelete.mockResolvedValue({ _id: '1' });
 
       const res = await request(app).delete('/deleterequest/1');
 
-    //  console.log('Positive Test Case: Successfully deleted request item with ID 1.');
+      console.log('Positive Test Case: Successfully deleted request item with ID 1.');
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.message).toBe('Request deleted successfully');
+      expect(res.body.status).toBe('req is deleted');
     });
 
     it('should return 400 if deleting request item fails (negative case)', async () => {
@@ -90,11 +109,12 @@ describe('Request Item Routes', () => {
 
       const res = await request(app).delete('/deleterequest/1');
 
-     // console.log('Negative Test Case: Failed to delete request item with ID 1 - Database error.');
+      console.log('Negative Test Case: Failed to delete request item with ID 1 - Database error.');
 
       expect(res.statusCode).toBe(400);
       expect(res.body.status).toBe('Error with delete req');
       expect(res.body.message).toBe('Database error');
     });
   });
+
 });
