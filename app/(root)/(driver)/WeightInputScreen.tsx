@@ -4,7 +4,6 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useWeights } from '../hooks/useWeights';
 import { usePickupData } from '../hooks/usePickupData';
 import { submitWeights } from '../services/PickupService';
-import { getPickupByUserId } from '../services/PickupService';
 import { MaterialIcons } from '@expo/vector-icons';  // Import icons for back navigation
 
 export default function WeightInput() {
