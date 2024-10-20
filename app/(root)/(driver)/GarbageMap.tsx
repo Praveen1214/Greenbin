@@ -44,7 +44,7 @@ const GarbageMap = () => {
 
   const handleCompletePickup = () => {
     // Navigate to the QR Code Scanner screen
-    router.push("(requests)/residenceRequests/QRCodeScanner");  // Adjust the path as per your route structure
+    router.push("QRCodeScanner");  // Adjust the path as per your route structure
   };
 
   const handleLogout = async () => {
