@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { getPickupByUserId } from '../../services/PickupService';
-import { decodeQRData } from '../../../utils/qrDecoder';
+import { getPickupByUserId } from '../services/PickupService';
+import { decodeQRData } from '../../utils/qrDecoder';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
