@@ -16,7 +16,6 @@ router.get('/request-items', async (req, res) => {
 // Post a new request item
 router.post('/request-item', async (req, res) => {
     try {
-        console.log("Received request body:", req.body);
         const {
             category,
             quantity,
@@ -42,7 +41,6 @@ router.post('/request-item', async (req, res) => {
         });
 
         const savedItem = await newRequestItem.save();
-        console.log("Saved item:", savedItem);
 
         res.status(201).json({ message: 'Request item created successfully', item: savedItem });
     } catch (error) {
