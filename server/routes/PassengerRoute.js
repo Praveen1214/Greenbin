@@ -82,7 +82,7 @@ router.get('/getProfile/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
         const userProfile = await Passengers.findById(userId);
-        if (!userProfile) {
+        if (!userProfile || userProfile === null) {
             return res.status(404).json({ message: 'User not found' });
         }
         // Return the user profile

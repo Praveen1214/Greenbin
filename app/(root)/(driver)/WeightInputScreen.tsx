@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { useWeights } from '../../hooks/useWeights';
-import { usePickupData } from '../../hooks/usePickupData';
-import { submitWeights } from '../../services/PickupService';
+import { useWeights } from '../hooks/useWeights';
+import { usePickupData } from '../hooks/usePickupData';
+import { submitWeights } from '../services/PickupService';
+import { MaterialIcons } from '@expo/vector-icons';  // Import icons for back navigation
 
 const COST_PER_KG = 250; // LKR 250 per kg
 
@@ -69,6 +70,14 @@ export default function WeightInput() {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <MaterialIcons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Enter Weights</Text>
+      </View>
+
       <View style={styles.card}>
         <Text style={styles.title}>Pickup Request Details</Text>
         <RequestDetails pickupData={pickupData} />
@@ -136,8 +145,25 @@ const TotalAmountDisplay = ({ totalAmount }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop : 30,
     padding: 16,
     backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backButton: {
+    backgroundColor: '#4CAF50',
+    padding: 8,
+    borderRadius: 50,
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
   },
   card: {
     marginBottom: 16,

@@ -27,11 +27,12 @@ router.get('/getallpickupgarbage', async (req, res) => {
     const allpickups = await PickupGarbage.find();
     return res.json(allpickups);
   } catch (error) {
-    return res.status(400).json({ message: error });
+    return res.status(400).json({ message: 'Database error', error: error.message });
   }
 });
 
 // Get pickup garbage by user ID
+
 router.get('/getbyuserid/:userid', async (req, res) => {
   try {
     const pickups = await PickupGarbage.find({ userid: req.params.userid });
@@ -114,5 +115,6 @@ router.delete('/deleteshedule/:id', async (req, res) => {
     return res.status(400).json({ status: 'Error deleting PickupGarbage', message: error.message });
   }
 });
+
 
 module.exports = router;
