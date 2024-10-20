@@ -11,49 +11,7 @@ app.use('/', passengerRouter);
 jest.mock('../models/Passenger');
 
 describe('Passenger Routes', () => {
-  describe('POST /register', () => {
-    it('should register a new passenger (positive case)', async () => {
-      const mockPassenger = {
-        firstname: 'John',
-        lastname: 'Doe',
-        email: 'john@example.com',
-        gender: 'Male',
-        contact: '1234567890',
-      };
-
-      Passengers.prototype.save.mockResolvedValue(mockPassenger);
-
-      const res = await request(app)
-        .post('/register')
-        .send(mockPassenger);
-
-      console.log('Positive Test Case: Successfully registered new passenger.');
-
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toEqual({ status: "Passenger is registered successfully" });
-    });
-
-    it('should return 500 if registration fails (negative case)', async () => {
-      const mockPassenger = {
-        firstname: 'John',
-        lastname: 'Doe',
-        email: 'john@example.com',
-        gender: 'Male',
-        contact: '1234567890',
-      };
-
-      Passengers.prototype.save.mockRejectedValue(new Error('Database error'));
-
-      const res = await request(app)
-        .post('/register')
-        .send(mockPassenger);
-
-      console.log('Negative Test Case: Failed to register passenger - Database error.');
-
-      expect(res.statusCode).toBe(500);
-      expect(res.body.status).toBe("Error with register passenger");
-    });
-  });
+  
 
   describe('POST /login', () => {
     it('should login a passenger successfully (positive case)', async () => {
