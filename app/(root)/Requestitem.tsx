@@ -123,8 +123,7 @@ const RequestItem = () => {
           }
         );
 
-        console.log("Response status:", response.status);
-        console.log("Response data:", response.data);
+
 
         if (response.status === 201) {
           setStep(3);

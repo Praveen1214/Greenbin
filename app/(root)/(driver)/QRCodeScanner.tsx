@@ -29,7 +29,6 @@ export default function QRCodeScanner() {
     setLoading(true);
 
     try {
-      console.log('Raw scanned data:', data);
       const bookingDetails = decodeQRData(data);
       setScannedData(bookingDetails);
 
