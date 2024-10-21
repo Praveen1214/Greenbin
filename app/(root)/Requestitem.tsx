@@ -109,7 +109,7 @@ const RequestItem = () => {
 
       try {
         const response = await axios.post(
-          `http://192.168.43.196:5000/api/requestitem/request-item`,
+          `http://192.168.1.13:5000/api/requestitem/request-item`,
           {
             category,
             quantity,
