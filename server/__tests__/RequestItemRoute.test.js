@@ -18,13 +18,15 @@ describe('Request Item Routes', () => {
     it('should return 200 and request items for a valid contact', async () => {
       const mockItems = [{ id: '1', category: 'Electronics', quantity: 10 }];
       RequestItem.find.mockResolvedValue(mockItems);
-      
+
+
       const res = await request(app).get('/getallrequestitems/1234567890');
-      
+
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('req is fatched');
       expect(res.body.req).toEqual(mockItems);
-      
+
+
       console.log('Positive Test: GET /getallrequestitems/:contact - Success');
     });
 
@@ -35,7 +37,7 @@ describe('Request Item Routes', () => {
       
       expect(res.statusCode).toBe(404);
       expect(res.body.status).toBe('req not found');
-      
+
       console.log('Negative Test: GET /getallrequestitems/:contact - Not Found');
     });
 
@@ -47,7 +49,7 @@ describe('Request Item Routes', () => {
       expect(res.statusCode).toBe(500);
       expect(res.body.status).toBe('Error with fetch req');
       expect(res.body.message).toBe('Database error');
-      
+
       console.log('Negative Test: GET /getallrequestitems/:contact - Server Error');
     });
   });
@@ -56,14 +58,16 @@ describe('Request Item Routes', () => {
     it('should return 200 if request item is updated successfully', async () => {
       const updatedItem = { id: '1', category: 'Updated Electronics', quantity: 20 };
       RequestItem.findByIdAndUpdate.mockResolvedValue(updatedItem);
-      
+
+
       const res = await request(app)
         .put('/updaterequest/1')
         .send(updatedItem);
-      
+
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('req updated');
-      
+
+
       console.log('Positive Test: PUT /updaterequest/:id - Success');
     });
 
@@ -77,7 +81,7 @@ describe('Request Item Routes', () => {
       expect(res.statusCode).toBe(500);
       expect(res.body.status).toBe('Error with update req');
       expect(res.body.message).toBe('Database error');
-      
+
       console.log('Negative Test: PUT /updaterequest/:id - Server Error');
     });
   });
@@ -85,12 +89,14 @@ describe('Request Item Routes', () => {
   describe('DELETE /deleterequest/:id', () => {
     it('should return 200 if request item is deleted successfully', async () => {
       RequestItem.findByIdAndDelete.mockResolvedValue({});
-      
+
+
       const res = await request(app).delete('/deleterequest/1');
-      
+
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('req is deleted');
-      
+
+
       console.log('Positive Test: DELETE /deleterequest/:id - Success');
     });
 
@@ -102,7 +108,7 @@ describe('Request Item Routes', () => {
       expect(res.statusCode).toBe(400);
       expect(res.body.status).toBe('Error with delete req');
       expect(res.body.message).toBe('Database error');
-      
+
       console.log('Negative Test: DELETE /deleterequest/:id - Bad Request');
     });
   });

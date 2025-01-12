@@ -1,7 +1,9 @@
 // services/RequestService.ts
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.13:5000/api/requestitem";
+
+const BASE_URL = "http://192.168.134.196:5000/api/requestitem";
+
 
 export const fetchRequests = async (contact: string) => {
   try {

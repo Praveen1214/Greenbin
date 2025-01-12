@@ -62,7 +62,9 @@ const Book_a_pickup = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('http://192.168.1.13:5000/api/pickupgarbage/addpickupgarbage', {
+
+      const response = await axios.post('http://192.168.134.196:5000/api/pickupgarbage/addpickupgarbage', {
+
         userid,
         location,
         garbagetypes: selectedTypes,
