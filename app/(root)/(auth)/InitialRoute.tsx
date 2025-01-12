@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const InitialRoute = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     checkLoginStatus();
@@ -15,6 +16,7 @@ const InitialRoute = () => {
     try {
       const passengerDetails = await AsyncStorage.getItem("passengerDetails");
       setIsLoggedIn(!!passengerDetails);
+      setRole(passengerDetails ? JSON.parse(passengerDetails).role : "");
     } catch (error) {
       console.error("Error checking login status:", error);
     } finally {
@@ -24,14 +26,18 @@ const InitialRoute = () => {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="items-center justify-center flex-1">
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
 
   if (isLoggedIn) {
-    return <Redirect href="/(tabs)/home" />;
+    if (role === "Passenger") {
+      return <Redirect href="/(tabs)/home" />;
+    } else {
+      return <Redirect href="/(driver)/GarbageMap" />;
+    }
   } else {
     return <Redirect href="/(auth)/welcome" />;
   }
